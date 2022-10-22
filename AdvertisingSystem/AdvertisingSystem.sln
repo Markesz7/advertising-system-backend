@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32901.215
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdvertisingSystem.Api", "AdvertisingSystem\AdvertisingSystem.Api.csproj", "{4DADED85-BC3A-4592-95D2-F70A4A8B82DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdvertisingSystem.Api", "AdvertisingSystem.Api\AdvertisingSystem.Api.csproj", "{4DADED85-BC3A-4592-95D2-F70A4A8B82DE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdvertisingSystem.Bll", "AdvertisingSystem.Bll\AdvertisingSystem.Bll.csproj", "{B1136996-80B4-4968-9C50-3E108E88FE94}"
 EndProject
