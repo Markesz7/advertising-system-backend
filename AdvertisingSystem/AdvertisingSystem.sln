@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32901.215
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdvertisingSystem", "AdvertisingSystem\AdvertisingSystem.csproj", "{4DADED85-BC3A-4592-95D2-F70A4A8B82DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdvertisingSystem.Api", "AdvertisingSystem\AdvertisingSystem.Api.csproj", "{4DADED85-BC3A-4592-95D2-F70A4A8B82DE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdvertisingSystem.Bll", "AdvertisingSystem.Bll\AdvertisingSystem.Bll.csproj", "{B1136996-80B4-4968-9C50-3E108E88FE94}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdvertisingSystem.Dal", "AdvertisingSystem.Dal\AdvertisingSystem.Dal.csproj", "{CEF8AFDE-29B6-460D-BD9C-07A4E22135C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{4DADED85-BC3A-4592-95D2-F70A4A8B82DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4DADED85-BC3A-4592-95D2-F70A4A8B82DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4DADED85-BC3A-4592-95D2-F70A4A8B82DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1136996-80B4-4968-9C50-3E108E88FE94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1136996-80B4-4968-9C50-3E108E88FE94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1136996-80B4-4968-9C50-3E108E88FE94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1136996-80B4-4968-9C50-3E108E88FE94}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CEF8AFDE-29B6-460D-BD9C-07A4E22135C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEF8AFDE-29B6-460D-BD9C-07A4E22135C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEF8AFDE-29B6-460D-BD9C-07A4E22135C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEF8AFDE-29B6-460D-BD9C-07A4E22135C1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
