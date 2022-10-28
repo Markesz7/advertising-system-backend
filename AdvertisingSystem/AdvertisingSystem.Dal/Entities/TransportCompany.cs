@@ -9,5 +9,7 @@ namespace AdvertisingSystem.Dal.Entities
     public class TransportCompany
     {
         //Naviagtion properties
+        public IEnumerable<Transportline> Transportlines { get; } = new List<Transportline>();
+        public IEnumerable<Revenue> Revenues { get; } = new List<Revenue>();
     }
 }

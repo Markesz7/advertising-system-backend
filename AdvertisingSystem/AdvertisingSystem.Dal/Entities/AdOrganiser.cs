@@ -9,5 +9,6 @@ namespace AdvertisingSystem.Dal.Entities
     public class AdOrganiser
     {
         //Navigation properties
+        public IEnumerable<Revenue> Revenues { get; } = new List<Revenue>();
     }
 }

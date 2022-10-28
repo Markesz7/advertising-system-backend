@@ -6,9 +6,13 @@ using System.Threading.Tasks;
 
 namespace AdvertisingSystem.Dal.Entities
 {
-    internal class Advertiser
+    public class Advertiser
     {
-        public int Id { get; set; }
         public int money { get; set; }
+        public bool enabled { get; set; }
+
+        //Navigation properties
+        public IEnumerable<Ad> Ads { get; } = new List<Ad>();
+        public IEnumerable<Receipt> Receipts { get; } = new List<Receipt>();
     }
 }

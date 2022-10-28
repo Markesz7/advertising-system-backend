@@ -16,6 +16,13 @@ namespace AdvertisingSystem.Dal.Entities
         //TODO: Maybe use enums with groups
         public string Group { get; set; }
 
+        //Foreign keys
+        public int TransportCompanyId { get; set; }
+
+        //Navigation properties
+        public TransportCompany TransportCompany { get; set; } = null!;
+        public IEnumerable<Ad> Ads { get; } = new List<Ad>();
+
         public Transportline(string name, string group)
         {
             Name = name;

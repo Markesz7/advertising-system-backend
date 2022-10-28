@@ -40,6 +40,14 @@ namespace AdvertisingSystem.Dal.Entities
             }
         }
 
+        //Foreign key
+        public int AdvertiserId { get; set; }
+
+        //Navigation properties
+        public Advertiser Advertiser { get; set; } = null!;
+        public IEnumerable<Transportline> Transportlines { get; } = new List<Transportline>();
+        public IEnumerable<Receipt> Receipts { get; } = new List<Receipt>();
+
         public Ad(string paymentMethod, string url)
         {
             PaymentMethod = paymentMethod;
