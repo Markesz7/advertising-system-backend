@@ -13,9 +13,11 @@ namespace AdvertisingSystem.Dal.Entities
         public int Occurence { get; set; }
         //TODO: maybe do this with enums (probably preferred) or with simple boolean
         public string PaymentMethod { get; set; }
-        public string URL {  get; set; }
+        //Name can't be only URL (and url for parameter), because it causes problems with EF Core
+        public string AdURL { get; set; }
         public TimeOnly? StartTime { get; set; }
         public TimeOnly? EndTime { get; set; }
+        [Column("PlaceGroups")]
         public string? SerializedPlaceGroups { get; set; }
 
         // Entity Framework Core doesn't support Lists of primitives as values,
@@ -48,10 +50,10 @@ namespace AdvertisingSystem.Dal.Entities
         public IEnumerable<Transportline> Transportlines { get; } = new List<Transportline>();
         public IEnumerable<Receipt> Receipts { get; } = new List<Receipt>();
 
-        public Ad(string paymentMethod, string url)
+        public Ad(string paymentMethod, string adURL)
         {
             PaymentMethod = paymentMethod;
-            URL = url;
+            AdURL = adURL;
         }
 
     }

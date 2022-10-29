@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AdvertisingSystem.Dal.Entities
 {
-    public class AdOrganiser
+    public class AdOrganiser : ApplicationUser
     {
         //Navigation properties
         public IEnumerable<Revenue> Revenues { get; } = new List<Revenue>();

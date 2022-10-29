@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace AdvertisingSystem.Dal.Entities
 {
-    public class Advertiser
+    public class Advertiser : ApplicationUser
     {
-        public int money { get; set; }
-        public bool enabled { get; set; }
+        public int Money { get; set; }
+        public bool Enabled { get; set; }
 
         //Navigation properties
         public IEnumerable<Ad> Ads { get; } = new List<Ad>();

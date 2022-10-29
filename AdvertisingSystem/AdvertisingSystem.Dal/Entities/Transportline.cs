@@ -11,8 +11,8 @@ namespace AdvertisingSystem.Dal.Entities
         public int Id { get; set; }
         public string Name { get; set; }
         //TODO: Consider starttime and endtime as a list<TimeOnly>
-        public TimeOnly startTime { get; set; }
-        public TimeOnly endTime { get; set; }
+        public TimeOnly StartTime { get; set; }
+        public TimeOnly EndTime { get; set; }
         //TODO: Maybe use enums with groups
         public string Group { get; set; }
 
