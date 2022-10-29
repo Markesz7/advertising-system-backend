@@ -13,4 +13,8 @@
     <Folder Include="Services\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\AdvertisingSystem.Dal\AdvertisingSystem.Dal.csproj" />
+  </ItemGroup>
+
 </Project>

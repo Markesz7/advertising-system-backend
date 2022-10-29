@@ -41,6 +41,15 @@ namespace AdvertisingSystem.Dal
                 builder.Property(t => t.EndTime).HasConversion<TimeOnlyConverter, TimeOnlyComparer>();
             });
 
+            //Because now I use the TPH (Table-per-hierarchy) database inheritance, every user is in one table
+            //so SQL server thinks if we delete a user, then it does two delete cascade paths (ad and transportline line)
+            // For now to fix this, I use restrict delete for the transportlines to break one cascade path.
+            builder.Entity<Transportline>()
+                .HasOne(p => p.TransportCompany)
+                .WithMany(p => p.Transportlines)
+                .HasForeignKey(p => p.TransportCompanyId)
+                .OnDelete(DeleteBehavior.Restrict);
+
         }
     }
 }

@@ -48,7 +48,7 @@ namespace AdvertisingSystem.Dal.Entities
         //Navigation properties
         public Advertiser Advertiser { get; set; } = null!;
         public IEnumerable<Transportline> Transportlines { get; } = new List<Transportline>();
-        public IEnumerable<Receipt> Receipts { get; } = new List<Receipt>();
+        //public IEnumerable<Receipt> Receipts { get; } = new List<Receipt>();
 
         public Ad(string paymentMethod, string adURL)
         {

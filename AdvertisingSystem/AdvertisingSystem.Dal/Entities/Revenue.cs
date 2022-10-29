@@ -14,10 +14,8 @@ namespace AdvertisingSystem.Dal.Entities
 
         //Foreign keys
         public int TransportCompanyId { get; set; }
-        public int AdOrganiserId { get; set; }
 
         //Navigation properties
         public TransportCompany? TransportCompany { get; set; }
-        public AdOrganiser? AdOrganiser { get; set; }
     }
 }
