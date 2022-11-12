@@ -4,6 +4,7 @@ using AdvertisingSystem.Dal;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AdvertisingSystem.Dal.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221112162813_SeedNewData")]
+    partial class SeedNewData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,7 +36,7 @@ namespace AdvertisingSystem.Dal.Migrations
 
                     b.HasIndex("TransportlinesId");
 
-                    b.ToTable("AdTransportline", (string)null);
+                    b.ToTable("AdTransportline");
                 });
 
             modelBuilder.Entity("AdvertisingSystem.Dal.Entities.Ad", b =>
@@ -73,7 +75,7 @@ namespace AdvertisingSystem.Dal.Migrations
 
                     b.HasIndex("AdvertiserId");
 
-                    b.ToTable("Ads", (string)null);
+                    b.ToTable("Ads");
                 });
 
             modelBuilder.Entity("AdvertisingSystem.Dal.Entities.ApplicationUser", b =>
@@ -171,7 +173,7 @@ namespace AdvertisingSystem.Dal.Migrations
 
                     b.HasIndex("AdvertiserId");
 
-                    b.ToTable("Receipts", (string)null);
+                    b.ToTable("Receipts");
                 });
 
             modelBuilder.Entity("AdvertisingSystem.Dal.Entities.Revenue", b =>
@@ -195,7 +197,7 @@ namespace AdvertisingSystem.Dal.Migrations
 
                     b.HasIndex("TransportCompanyId");
 
-                    b.ToTable("Revenues", (string)null);
+                    b.ToTable("Revenues");
 
                     b.HasData(
                         new
@@ -236,7 +238,7 @@ namespace AdvertisingSystem.Dal.Migrations
 
                     b.HasIndex("TransportCompanyId");
 
-                    b.ToTable("Transportlines", (string)null);
+                    b.ToTable("Transportlines");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>

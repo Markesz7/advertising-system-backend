@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AdvertisingSystem.Bll.Dtos;
+using AdvertisingSystem.Bll.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,6 +10,13 @@ namespace AdvertisingSystem.Api.Controllers
     [ApiController]
     public class TransportCompanyController : ControllerBase
     {
+        private readonly ITransportCompanyService _transportCompanyService;
+
+        public TransportCompanyController(ITransportCompanyService transportCompanyService)
+        {
+            _transportCompanyService = transportCompanyService;
+        }
+
         // GET: api/<TransportCompanyController>
         [HttpGet]
         public IEnumerable<string> Get()
@@ -17,15 +26,17 @@ namespace AdvertisingSystem.Api.Controllers
 
         // GET api/<TransportCompanyController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<ActionResult<IEnumerable<RevenueDTO>>> GetRevenues(int id)
         {
-            return "value";
+            return (await _transportCompanyService.GetRevenuesByCompanyAsync(id)).ToList();
         }
 
         // POST api/<TransportCompanyController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult<TransportlineDTO>> InsertTransportline([FromBody] TransportlineDTO transportline)
         {
+            var newTransportline = await _transportCompanyService.InsertTransportlineAsync(transportline);
+            return CreatedAtAction(nameof(Get), new { id = newTransportline.Id }, newTransportline);
         }
 
         // PUT api/<TransportCompanyController>/5

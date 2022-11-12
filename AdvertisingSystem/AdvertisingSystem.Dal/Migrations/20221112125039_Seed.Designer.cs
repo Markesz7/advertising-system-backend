@@ -4,6 +4,7 @@ using AdvertisingSystem.Dal;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AdvertisingSystem.Dal.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221112125039_Seed")]
+    partial class Seed
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,7 +36,7 @@ namespace AdvertisingSystem.Dal.Migrations
 
                     b.HasIndex("TransportlinesId");
 
-                    b.ToTable("AdTransportline", (string)null);
+                    b.ToTable("AdTransportline");
                 });
 
             modelBuilder.Entity("AdvertisingSystem.Dal.Entities.Ad", b =>
@@ -73,7 +75,7 @@ namespace AdvertisingSystem.Dal.Migrations
 
                     b.HasIndex("AdvertiserId");
 
-                    b.ToTable("Ads", (string)null);
+                    b.ToTable("Ads");
                 });
 
             modelBuilder.Entity("AdvertisingSystem.Dal.Entities.ApplicationUser", b =>
@@ -171,7 +173,7 @@ namespace AdvertisingSystem.Dal.Migrations
 
                     b.HasIndex("AdvertiserId");
 
-                    b.ToTable("Receipts", (string)null);
+                    b.ToTable("Receipts");
                 });
 
             modelBuilder.Entity("AdvertisingSystem.Dal.Entities.Revenue", b =>
@@ -195,16 +197,7 @@ namespace AdvertisingSystem.Dal.Migrations
 
                     b.HasIndex("TransportCompanyId");
 
-                    b.ToTable("Revenues", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Amount = 5000,
-                            Date = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TransportCompanyId = 1
-                        });
+                    b.ToTable("Revenue");
                 });
 
             modelBuilder.Entity("AdvertisingSystem.Dal.Entities.Transportline", b =>
@@ -236,7 +229,7 @@ namespace AdvertisingSystem.Dal.Migrations
 
                     b.HasIndex("TransportCompanyId");
 
-                    b.ToTable("Transportlines", (string)null);
+                    b.ToTable("Transportlines");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
@@ -403,11 +396,11 @@ namespace AdvertisingSystem.Dal.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "c9a0e5c0-9360-4e55-9fa9-a67b70e45ad0",
+                            ConcurrencyStamp = "2d79e1e4-f9f4-4dfb-b9e8-fc31634681ad",
                             Email = "test@test.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAEAACcQAAAAEBoCydQHbf/ylosvtGRGJ6cJgf0DLyfUg7+/s7i/jpdEUiEGhUrRu+ZlajAOYVX8lg==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEMcjh/0hjQF68XNIOrf1a9kdl/PzLuSRucm/rv9SvB555ojWLqE5qgrEkLIchNIvHA==",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "t"

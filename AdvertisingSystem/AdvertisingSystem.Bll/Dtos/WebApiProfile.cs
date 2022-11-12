@@ -12,7 +12,8 @@ namespace AdvertisingSystem.Bll.Dtos
             CreateMap<Transportline, TransportlineDTO>().ReverseMap();
             CreateMap<Advertiser, AdvertiserDTO>().ReverseMap();
             CreateMap<Receipt, ReceiptDTO>().ReverseMap();
-            CreateMap<Revenue, RevenueDTO>().ReverseMap();
+            CreateMap<TransportCompany, RevenueDTO>();
+            CreateMap<Revenue, RevenueDTO>();
             CreateMap<RestrictAdDTO, Ad>();
             CreateMap<RestrictAdvertiserDTO, Advertiser>();
             CreateMap<MoneyDTO, Advertiser>();

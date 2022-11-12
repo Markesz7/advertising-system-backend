@@ -20,7 +20,7 @@ namespace AdvertisingSystem.Dal
         public DbSet<Ad> Ads => Set<Ad>();
         public DbSet<Transportline> Transportlines => Set<Transportline>();
         public DbSet<Receipt> Receipts => Set<Receipt>();
-        public DbSet<Revenue> Revenue => Set<Revenue>();
+        public DbSet<Revenue> Revenues => Set<Revenue>();
         public DbSet<TransportCompany> TransportCompanys => Set<TransportCompany>();
         public DbSet<AdOrganiser> Adorganisers => Set<AdOrganiser>();
         public DbSet<Advertiser> Advertisers => Set<Advertiser>();
@@ -41,14 +41,38 @@ namespace AdvertisingSystem.Dal
                 builder.Property(t => t.EndTime).HasConversion<TimeOnlyConverter, TimeOnlyComparer>();
             });
 
-            //Because now I use the TPH (Table-per-hierarchy) database inheritance, every user is in one table
-            //so SQL server thinks if we delete a user, then it does two delete cascade paths (ad and transportline line)
+            // Because now I use the TPH (Table-per-hierarchy) database inheritance, every user is in one table
+            // so SQL server thinks if we delete a user, then it has two delete cascade paths (ad and transportline line)
             // For now to fix this, I use restrict delete for the transportlines to break one cascade path.
+            // TODO: With Restrict delete, we can't run Update-database 0
             builder.Entity<Transportline>()
                 .HasOne(p => p.TransportCompany)
                 .WithMany(p => p.Transportlines)
                 .HasForeignKey(p => p.TransportCompanyId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // Seed test user data
+            var appUser = new TransportCompany
+            {
+                Id = 1,
+                Email = "test@test.com",
+                EmailConfirmed = true,
+                UserName = "t",
+            };
+
+            PasswordHasher<TransportCompany> ph = new PasswordHasher<TransportCompany>();
+            appUser.PasswordHash = ph.HashPassword(appUser, "123");
+
+            builder.Entity<TransportCompany>().HasData(appUser);
+
+            // Seed test revenue
+            builder.Entity<Revenue>().HasData(new Revenue
+            {
+                Id = 1,
+                Date = new DateTime(2000, 1, 1),
+                Amount = 5000,
+                TransportCompanyId = appUser.Id
+            });
 
         }
     }

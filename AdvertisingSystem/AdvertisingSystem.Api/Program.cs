@@ -1,4 +1,6 @@
 using AdvertisingSystem.Bll.Dtos;
+using AdvertisingSystem.Bll.Interfaces;
+using AdvertisingSystem.Bll.Services;
 using AdvertisingSystem.Dal;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +17,8 @@ builder.Services.AddDbContext<AppDbContext>(o =>
     o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddAutoMapper(typeof(WebApiProfile));
+
+builder.Services.AddTransient<ITransportCompanyService, TransportCompanyService>();
 
 var app = builder.Build();
 

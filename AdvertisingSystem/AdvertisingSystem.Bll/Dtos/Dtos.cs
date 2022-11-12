@@ -1,4 +1,6 @@
 ﻿using AdvertisingSystem.Dal.Entities;
+using AdvertisingSystem.Dal.Helper;
+using System.Text.Json.Serialization;
 
 namespace AdvertisingSystem.Bll.Dtos
 {
@@ -31,14 +33,17 @@ namespace AdvertisingSystem.Bll.Dtos
         public int AdvertiserId { get; init; }
         public Advertiser Advertiser { get; init; } = null!;
     }
+
     public record TransportlineDTO
     {
         public int Id { get; init; }
         public string Name { get; init; } = null!;
+        [JsonConverter(typeof(TimeOnlyJSONConverter))]
         public TimeOnly StartTime { get; init; }
+        [JsonConverter(typeof(TimeOnlyJSONConverter))]
         public TimeOnly EndTime { get; init; }
         public string Group { get; init; } = null!;
         public int TransportCompanyId { get; init; }
-        public TransportCompany TransportCompany { get; init; } = null!;
+        //public TransportCompany? TransportCompany { get; init; } = null!;
     }
 }
