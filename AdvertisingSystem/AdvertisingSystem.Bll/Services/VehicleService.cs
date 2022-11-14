@@ -20,14 +20,15 @@ namespace AdvertisingSystem.Bll.Services
 
         public async Task<IEnumerable<VehicleAdDTO>> GetAdsAsyncForTransportline(int tlId)
         {
-            return await _context.Transportlines
+            // TODO: Check if there is a better solution for mapping the ads to VehicleAdDTO
+            var temp = await _context.Transportlines
                 .Where(tl => tl.Id == tlId)
-                .Select(tl => tl.Ads) // The select is needed because we only want to convert the Ads, not the whole object
-                .ProjectTo<VehicleAdDTO>(_mapper.ConfigurationProvider)
-                .ToListAsync();
+                .Select(tl => tl.Ads).FirstAsync(); // The select is needed because we only want to convert the Ads, not the whole object
+
+            return temp.Select(tl => _mapper.Map<VehicleAdDTO>(tl));
         }
 
-        /* This is not good a solution a performance is bad as well, but for test data, it works.
+        /* This is not good a solution and performance is bad as well, but for test data, it works.
          * Possible solutions for later (this essentialy needs a bulk update):
          * 1. Update to EF Core 7 (released at the beginning of 2022 Nov), which supports bulk update, but this can break other stuff
          * 2. Add the Z.EntityFramework.Plus.EFCore nuget package, which supports bulk update, but this needs a lot of dependency updates
@@ -39,9 +40,10 @@ namespace AdvertisingSystem.Bll.Services
             var selectedAds = await _context.Ads
                 .Where(ad => adsIDList.Contains(ad.Id)).ToListAsync();
             foreach(var ad in selectedAds)
-            {
                 ad.Occurence += ads.Where(x => x.Id == ad.Id).First().Occurence;
-            }
+
+            _context.UpdateRange(selectedAds);
+            await _context.SaveChangesAsync();
         }
     }
 }

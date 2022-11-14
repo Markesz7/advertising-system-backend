@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AdvertisingSystem.Bll.Dtos;
+using AdvertisingSystem.Bll.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,36 +10,26 @@ namespace AdvertisingSystem.Api.Controllers
     [ApiController]
     public class VehicleController : ControllerBase
     {
-        // GET: api/<VehicleController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly IVehicleService _vehicleService;
+
+        public VehicleController(IVehicleService vehicleService)
         {
-            return new string[] { "value1", "value2" };
+            _vehicleService = vehicleService;
         }
 
-        // GET api/<VehicleController>/5
+        // GET: api/<VehicleController>
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<ActionResult<IEnumerable<VehicleAdDTO>>> GetAdsForTransportline(int id)
         {
-            return "value";
+            return (await _vehicleService.GetAdsAsyncForTransportline(id)).ToList();
         }
 
         // POST api/<VehicleController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<ActionResult> PostAdOccurences([FromBody] IEnumerable<VehicleAdDTO> ads)
         {
-        }
-
-        // PUT api/<VehicleController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<VehicleController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            await _vehicleService.UploadAdOccurence(ads);
+            return NoContent();
         }
     }
 }

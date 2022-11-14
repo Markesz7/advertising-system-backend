@@ -19,6 +19,7 @@ builder.Services.AddDbContext<AppDbContext>(o =>
 builder.Services.AddAutoMapper(typeof(WebApiProfile));
 
 builder.Services.AddTransient<ITransportCompanyService, TransportCompanyService>();
+builder.Services.AddTransient<IVehicleService, VehicleService>();
 
 var app = builder.Build();
 
