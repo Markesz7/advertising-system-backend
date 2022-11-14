@@ -20,7 +20,7 @@ namespace AdvertisingSystem.Dal
         public DbSet<AdOrganiser> Adorganisers => Set<AdOrganiser>();
         public DbSet<Advertiser> Advertisers => Set<Advertiser>();
 
-        protected override async void OnModelCreating(ModelBuilder builder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
@@ -46,21 +46,47 @@ namespace AdvertisingSystem.Dal
                 .HasForeignKey(p => p.TransportCompanyId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            await Database.ExecuteSqlRawAsync("TRUNCATE TABLE [Transportlines]");
+            SeedData(builder);
+            //await Database.ExecuteSqlRawAsync("TRUNCATE TABLE [Transportlines]");
+        }
+
+        private void SeedData(ModelBuilder builder)
+        {
+            PasswordHasher<ApplicationUser> ph = new PasswordHasher<ApplicationUser>();
 
             // Seed test user data
-            var appUser = new TransportCompany
+            var tc = new TransportCompany
             {
                 Id = 1,
                 Email = "test@test.com",
                 EmailConfirmed = true,
                 UserName = "t",
             };
+            tc.PasswordHash = ph.HashPassword(tc, "123");
+            builder.Entity<TransportCompany>().HasData(tc);
 
-            PasswordHasher<TransportCompany> ph = new PasswordHasher<TransportCompany>();
-            appUser.PasswordHash = ph.HashPassword(appUser, "123");
+            Advertiser adv = new Advertiser
+            {
+                Id = 2,
+                Email = "testAdvertiser@test.com",
+                EmailConfirmed = true,
+                UserName = "t2",
+                Money = 100,
+                Enabled = true,
+                PhoneNumberConfirmed = true
+            };
+            adv.PasswordHash = ph.HashPassword(adv, "234");
+            builder.Entity<Advertiser>().HasData(adv);
 
-            builder.Entity<TransportCompany>().HasData(appUser);
+            AdOrganiser adOrg = new AdOrganiser
+            {
+                Id = 3,
+                Email = "testAdOrg@test.com",
+                EmailConfirmed = true,
+                UserName = "t3"
+            };
+            adOrg.PasswordHash = ph.HashPassword(adOrg, "345");
+            builder.Entity<AdOrganiser>().HasData(adOrg);
 
             // Seed test revenue
             builder.Entity<Revenue>().HasData(new Revenue
@@ -68,7 +94,7 @@ namespace AdvertisingSystem.Dal
                 Id = 1,
                 Date = new DateTime(2000, 1, 1),
                 Amount = 5000,
-                TransportCompanyId = appUser.Id
+                TransportCompanyId = tc.Id
             });
 
             // Seed test ads
@@ -77,7 +103,7 @@ namespace AdvertisingSystem.Dal
                 Id = 1,
                 PlaceGroups = new List<string>() { "Tram" },
                 Occurence = 0,
-                AdvertiserId = 25
+                AdvertiserId = 2
             };
 
             Ad ad2 = new Ad("Wallet", "test2.com")
@@ -85,9 +111,8 @@ namespace AdvertisingSystem.Dal
                 Id = 2,
                 PlaceGroups = new List<string>() { "Bus" },
                 Occurence = 0,
-                AdvertiserId = 26
+                AdvertiserId = 2
             };
-
             builder.Entity<Ad>().HasData(ad1, ad2);
 
             // Seed test Transportline
@@ -98,8 +123,14 @@ namespace AdvertisingSystem.Dal
                 EndTime = new TimeOnly(16, 27),
                 TransportCompanyId = 1
             };
-            tl.Ads.Add(ad1);
+            //tl.Ads.Add(ad1);
+            builder.Entity<Transportline>().HasData(tl);
 
+            builder.Entity("AdTransportline").HasData(new
+            {
+                AdsId = 2,
+                TransportlinesId = 1
+            });
         }
     }
 }
