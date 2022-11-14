@@ -22,14 +22,26 @@ namespace AdvertisingSystem.Bll.Services
         {
             return await _context.Transportlines
                 .Where(tl => tl.Id == tlId)
-                .Select(tl => tl.Ads)
+                .Select(tl => tl.Ads) // The select is needed because we only want to convert the Ads, not the whole object
                 .ProjectTo<VehicleAdDTO>(_mapper.ConfigurationProvider)
                 .ToListAsync();
         }
 
-        public Task UploadAdOccurence(IEnumerable<VehicleAdDTO> ads)
+        /* This is not good a solution a performance is bad as well, but for test data, it works.
+         * Possible solutions for later (this essentialy needs a bulk update):
+         * 1. Update to EF Core 7 (released at the beginning of 2022 Nov), which supports bulk update, but this can break other stuff
+         * 2. Add the Z.EntityFramework.Plus.EFCore nuget package, which supports bulk update, but this needs a lot of dependency updates
+         * 3. Search for an elegant raw SQL command solution
+         */
+        public async Task UploadAdOccurence(IEnumerable<VehicleAdDTO> ads)
         {
-            throw new NotImplementedException();
+            var adsIDList = ads.Select(ad => ad.Id).ToList();
+            var selectedAds = await _context.Ads
+                .Where(ad => adsIDList.Contains(ad.Id)).ToListAsync();
+            foreach(var ad in selectedAds)
+            {
+                ad.Occurence += ads.Where(x => x.Id == ad.Id).First().Occurence;
+            }
         }
     }
 }
