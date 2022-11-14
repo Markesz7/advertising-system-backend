@@ -3,11 +3,6 @@ using AdvertisingSystem.Dal.Helper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AdvertisingSystem.Dal
 {
@@ -25,7 +20,7 @@ namespace AdvertisingSystem.Dal
         public DbSet<AdOrganiser> Adorganisers => Set<AdOrganiser>();
         public DbSet<Advertiser> Advertisers => Set<Advertiser>();
 
-        protected override void OnModelCreating(ModelBuilder builder)
+        protected override async void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
@@ -51,6 +46,8 @@ namespace AdvertisingSystem.Dal
                 .HasForeignKey(p => p.TransportCompanyId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            await Database.ExecuteSqlRawAsync("TRUNCATE TABLE [Transportlines]");
+
             // Seed test user data
             var appUser = new TransportCompany
             {
@@ -73,6 +70,32 @@ namespace AdvertisingSystem.Dal
                 Amount = 5000,
                 TransportCompanyId = appUser.Id
             });
+
+            // Seed test ads
+            Ad ad1 = new Ad("Monthly", "test.com")
+            {
+                Id = 1,
+                PlaceGroups = new List<string>() { "Tram" },
+                Occurence = 0,
+                AdvertiserId = 5
+            };
+
+            Ad ad2 = new Ad("Wallet", "test2.com")
+            {
+                Id = 2,
+                PlaceGroups = new List<string>() { "Bus" },
+                Occurence = 0,
+                AdvertiserId = 5
+            };
+
+            // Seed test Transportline
+            Transportline tl = new Transportline("5A", "Bus")
+            {
+                Id = 1,
+                StartTime = new TimeOnly(15, 42),
+                EndTime = new TimeOnly(16, 27),
+                TransportCompanyId = 1
+            };
 
         }
     }
