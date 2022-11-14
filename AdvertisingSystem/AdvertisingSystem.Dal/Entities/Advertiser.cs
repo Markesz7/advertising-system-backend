@@ -12,7 +12,7 @@ namespace AdvertisingSystem.Dal.Entities
         public bool Enabled { get; set; }
 
         //Navigation properties
-        public IEnumerable<Ad> Ads { get; } = new List<Ad>();
-        public IEnumerable<Receipt> Receipts { get; } = new List<Receipt>();
+        public ICollection<Ad> Ads { get; } = new List<Ad>();
+        public ICollection<Receipt> Receipts { get; } = new List<Receipt>();
     }
 }

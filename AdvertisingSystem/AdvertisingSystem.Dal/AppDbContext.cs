@@ -77,7 +77,7 @@ namespace AdvertisingSystem.Dal
                 Id = 1,
                 PlaceGroups = new List<string>() { "Tram" },
                 Occurence = 0,
-                AdvertiserId = 5
+                AdvertiserId = 25
             };
 
             Ad ad2 = new Ad("Wallet", "test2.com")
@@ -85,8 +85,10 @@ namespace AdvertisingSystem.Dal
                 Id = 2,
                 PlaceGroups = new List<string>() { "Bus" },
                 Occurence = 0,
-                AdvertiserId = 5
+                AdvertiserId = 26
             };
+
+            builder.Entity<Ad>().HasData(ad1, ad2);
 
             // Seed test Transportline
             Transportline tl = new Transportline("5A", "Bus")
@@ -96,6 +98,7 @@ namespace AdvertisingSystem.Dal
                 EndTime = new TimeOnly(16, 27),
                 TransportCompanyId = 1
             };
+            tl.Ads.Add(ad1);
 
         }
     }

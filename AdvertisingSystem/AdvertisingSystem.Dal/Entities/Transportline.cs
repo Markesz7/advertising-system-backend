@@ -21,7 +21,7 @@ namespace AdvertisingSystem.Dal.Entities
 
         //Navigation properties
         public TransportCompany TransportCompany { get; set; } = null!;
-        public IEnumerable<Ad> Ads { get; } = new List<Ad>();
+        public ICollection<Ad> Ads { get; } = new List<Ad>();
 
         public Transportline(string name, string group)
         {
