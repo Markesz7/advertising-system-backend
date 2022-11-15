@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AdvertisingSystem.Bll.Dtos;
+using AdvertisingSystem.Bll.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,36 +10,26 @@ namespace AdvertisingSystem.Api.Controllers
     [ApiController]
     public class TransportCompanyController : ControllerBase
     {
-        // GET: api/<TransportCompanyController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly ITransportCompanyService _transportCompanyService;
+
+        public TransportCompanyController(ITransportCompanyService transportCompanyService)
         {
-            return new string[] { "value1", "value2" };
+            _transportCompanyService = transportCompanyService;
         }
 
         // GET api/<TransportCompanyController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("revenues/{id}")]
+        public async Task<ActionResult<IEnumerable<RevenueDTO>>> GetRevenues(int id)
         {
-            return "value";
+            return (await _transportCompanyService.GetRevenuesByCompanyAsync(id)).ToList();
         }
 
         // POST api/<TransportCompanyController>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpPost("createtransportline")]
+        public async Task<ActionResult<TransportlineDTO>> InsertTransportline([FromBody] TransportlineDTO transportline)
         {
-        }
-
-        // PUT api/<TransportCompanyController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<TransportCompanyController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            var newTransportline = await _transportCompanyService.InsertTransportlineAsync(transportline);
+            return CreatedAtAction(nameof(InsertTransportline), new { id = newTransportline.Id }, newTransportline);
         }
     }
 }

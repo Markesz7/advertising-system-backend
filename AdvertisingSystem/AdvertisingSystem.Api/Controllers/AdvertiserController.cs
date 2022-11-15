@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AdvertisingSystem.Bll.Dtos;
+using AdvertisingSystem.Bll.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,36 +10,43 @@ namespace AdvertisingSystem.Api.Controllers
     [ApiController]
     public class AdvertiserController : ControllerBase
     {
-        // GET: api/<AdvertiserController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly IAdvertiserService _advertiserService;
+
+        public AdvertiserController(IAdvertiserService advertiserService)
         {
-            return new string[] { "value1", "value2" };
+            _advertiserService = advertiserService;
         }
 
         // GET api/<AdvertiserController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("ads/{id}")]
+        public async Task<ActionResult<IEnumerable<AdDTO>>> GetAdsByUser(int id)
         {
-            return "value";
+            var ads = await _advertiserService.GetAdsByUserAsync(id);
+            return ads.ToList();
         }
 
-        // POST api/<AdvertiserController>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        // GET api/<AdvertiserController>/receipts/5
+        [HttpGet("receipts/{id}")]
+        public async Task<ActionResult<IEnumerable<ReceiptDTO>>> GetReceiptsByUser(int id)
         {
+            var receipts = await _advertiserService.GetReceiptsByUser(id);
+            return receipts.ToList();
         }
 
-        // PUT api/<AdvertiserController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        // POST api/<AdvertiserController>/PostAd
+        [HttpPost("createad")]
+        public async Task<ActionResult<AdDTO>> PostAd([FromBody] AdDTO ad)
         {
+            var newAd = await _advertiserService.InsertAdAsync(ad);
+            return CreatedAtAction(nameof(PostAd), new { Id = newAd.Id }, newAd);
         }
 
-        // DELETE api/<AdvertiserController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        // POST api/<AdvertiserController>/pay
+        [HttpPost("pay")]
+        public async Task<ActionResult<AdDTO>> PostAdMoney([FromBody] MoneyDTO money)
         {
+            await _advertiserService.AddMoneyAsync(money);
+            return NoContent();
         }
     }
 }

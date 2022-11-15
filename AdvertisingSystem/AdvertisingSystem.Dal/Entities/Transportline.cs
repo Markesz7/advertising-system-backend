@@ -11,10 +11,17 @@ namespace AdvertisingSystem.Dal.Entities
         public int Id { get; set; }
         public string Name { get; set; }
         //TODO: Consider starttime and endtime as a list<TimeOnly>
-        public TimeOnly startTime { get; set; }
-        public TimeOnly endTime { get; set; }
+        public TimeOnly StartTime { get; set; }
+        public TimeOnly EndTime { get; set; }
         //TODO: Maybe use enums with groups
         public string Group { get; set; }
+
+        //Foreign keys
+        public int TransportCompanyId { get; set; }
+
+        //Navigation properties
+        public TransportCompany TransportCompany { get; set; } = null!;
+        public ICollection<Ad> Ads { get; } = new List<Ad>();
 
         public Transportline(string name, string group)
         {
