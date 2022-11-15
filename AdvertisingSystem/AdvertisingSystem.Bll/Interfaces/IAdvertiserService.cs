@@ -8,6 +8,6 @@ namespace AdvertisingSystem.Bll.Interfaces
         public Task<IEnumerable<ReceiptDTO>> GetReceiptsByUser(int userId);
         public Task AddMoneyAsync(MoneyDTO advertiser);
         public Task<AdDTO> GetAdAsync(int adId);
-        public Task<IEnumerable<AdDTO>> GetAdsByUser(int advertiserId);
+        public Task<IEnumerable<AdDTO>> GetAdsByUserAsync(int advertiserId);
     }
 }

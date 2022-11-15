@@ -20,6 +20,8 @@ builder.Services.AddAutoMapper(typeof(WebApiProfile));
 
 builder.Services.AddTransient<ITransportCompanyService, TransportCompanyService>();
 builder.Services.AddTransient<IVehicleService, VehicleService>();
+builder.Services.AddTransient<IAdOrganiserService, AdOrganiserService>();
+builder.Services.AddTransient<IAdvertiserService, AdvertiserService>();
 
 var app = builder.Build();
 

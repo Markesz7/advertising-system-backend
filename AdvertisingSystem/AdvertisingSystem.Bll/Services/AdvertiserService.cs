@@ -42,7 +42,7 @@ namespace AdvertisingSystem.Bll.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<AdDTO>> GetAdsByUser(int advertiserId)
+        public async Task<IEnumerable<AdDTO>> GetAdsByUserAsync(int advertiserId)
         {
             return await _context.Ads
                 .Where(ad => ad.AdvertiserId == advertiserId)

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AdvertisingSystem.Bll.Dtos;
+using AdvertisingSystem.Bll.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,36 +10,35 @@ namespace AdvertisingSystem.Api.Controllers
     [ApiController]
     public class AdOrganiser : ControllerBase
     {
-        // GET: api/<AdOrganiser>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly IAdOrganiserService _adOrganiserService;
+
+        public AdOrganiser(IAdOrganiserService adOrganiserService)
         {
-            return new string[] { "value1", "value2" };
+            _adOrganiserService = adOrganiserService;
         }
 
-        // GET api/<AdOrganiser>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        // GET: api/<AdOrganiser>
+        [HttpGet("advertisers")]
+        public async Task<ActionResult<IEnumerable<AdvertiserDTO>>> GetAdvertisers()
         {
-            return "value";
+            var advertiser = await _adOrganiserService.GetAdvertisersAsync();
+            return advertiser.ToList();
         }
 
         // POST api/<AdOrganiser>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpPost("toggleadvertiser")]
+        public async Task<ActionResult> ToggleAdvertiser([FromBody] ToggleAdvertiserDTO advertiser)
         {
-        }
-
-        // PUT api/<AdOrganiser>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
+            await _adOrganiserService.ToggleUserAsync(advertiser);
+            return NoContent();
         }
 
         // DELETE api/<AdOrganiser>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete("deletead/{id}")]
+        public async Task<ActionResult> DeleteAd(int id)
         {
+            await _adOrganiserService.DeleteAdAsync(id);
+            return NoContent();
         }
     }
 }

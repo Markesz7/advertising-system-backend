@@ -17,38 +17,19 @@ namespace AdvertisingSystem.Api.Controllers
             _transportCompanyService = transportCompanyService;
         }
 
-        // GET: api/<TransportCompanyController>
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
         // GET api/<TransportCompanyController>/5
-        [HttpGet("{id}")]
+        [HttpGet("revenues/{id}")]
         public async Task<ActionResult<IEnumerable<RevenueDTO>>> GetRevenues(int id)
         {
             return (await _transportCompanyService.GetRevenuesByCompanyAsync(id)).ToList();
         }
 
         // POST api/<TransportCompanyController>
-        [HttpPost]
+        [HttpPost("createtransportline")]
         public async Task<ActionResult<TransportlineDTO>> InsertTransportline([FromBody] TransportlineDTO transportline)
         {
             var newTransportline = await _transportCompanyService.InsertTransportlineAsync(transportline);
-            return CreatedAtAction(nameof(Get), new { id = newTransportline.Id }, newTransportline);
-        }
-
-        // PUT api/<TransportCompanyController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<TransportCompanyController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            return CreatedAtAction(nameof(InsertTransportline), new { id = newTransportline.Id }, newTransportline);
         }
     }
 }
