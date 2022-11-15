@@ -6,7 +6,7 @@ namespace AdvertisingSystem.Bll.Interfaces
     {
         public Task DeleteAdAsync(int adID);
         public Task<IEnumerable<AdvertiserDTO>> GetAdvertisersAsync();
-        public Task EnableUserAsync(RestrictAdvertiserDTO advertiser);
+        public Task ToggleUserAsync(ToggleAdvertiserDTO advertiser);
         public Task DoBookingAsync();
     }
 }

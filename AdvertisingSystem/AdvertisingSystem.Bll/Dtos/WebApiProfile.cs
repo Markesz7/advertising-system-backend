@@ -15,7 +15,7 @@ namespace AdvertisingSystem.Bll.Dtos
             CreateMap<TransportCompany, RevenueDTO>();
             CreateMap<Revenue, RevenueDTO>();
             CreateMap<RestrictAdDTO, Ad>();
-            CreateMap<RestrictAdvertiserDTO, Advertiser>();
+            CreateMap<ToggleAdvertiserDTO, Advertiser>();
             CreateMap<MoneyDTO, Advertiser>();
             // TODO: This might not need a reversemap
             // TODO: Init occurence to 0, when vehicle asks for ads.

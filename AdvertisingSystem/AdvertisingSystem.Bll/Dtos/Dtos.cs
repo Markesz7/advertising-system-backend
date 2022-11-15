@@ -8,7 +8,7 @@ namespace AdvertisingSystem.Bll.Dtos
     public record ReceiptDTO(int Id, DateTime Date, int Price);
     public record VehicleAdDTO(int Id, int Occurence, string AdURL);
     public record RestrictAdDTO(int Id, bool Enabled, string AdURL);
-    public record RestrictAdvertiserDTO(int Id, bool Enabled);
+    public record ToggleAdvertiserDTO(int Id, bool Enabled);
     public record MoneyDTO(int Id, int Amount);
     public record AdvertiserDTO
     {
