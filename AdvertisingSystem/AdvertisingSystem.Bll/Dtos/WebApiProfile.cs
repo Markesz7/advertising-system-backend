@@ -10,7 +10,7 @@ namespace AdvertisingSystem.Bll.Dtos
             // This creates a two way map.
             CreateMap<Ad, AdDTO>().ReverseMap();
             CreateMap<Transportline, TransportlineDTO>().ReverseMap();
-            // TODO: The advertiser ads should be AdDTO and not Ad entityí
+            // TODO: The advertiser ads should be AdDTO and not Ad entity
             CreateMap<Advertiser, AdvertiserDTO>().ReverseMap();
             CreateMap<Receipt, ReceiptDTO>().ReverseMap();
             CreateMap<TransportCompany, RevenueDTO>();
@@ -19,8 +19,9 @@ namespace AdvertisingSystem.Bll.Dtos
             CreateMap<ToggleAdvertiserDTO, Advertiser>();
             CreateMap<MoneyDTO, Advertiser>();
             // TODO: This might not need a reversemap
-            // TODO: Init occurence to 0, when vehicle asks for ads.
-            CreateMap<Ad, VehicleAdDTO>().ReverseMap();
+            //CreateMap<Ad, VehicleAdDTO>().ReverseMap();
+            CreateMap<Transportline, IEnumerable<VehicleAdDTO>>()
+                .ConvertUsing(source => source.Ads.Select(ad => new VehicleAdDTO(ad.Id, 0, ad.AdURL)).ToList());
         }
     }
 }

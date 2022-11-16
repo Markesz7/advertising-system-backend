@@ -18,14 +18,15 @@ namespace AdvertisingSystem.Bll.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<VehicleAdDTO>> GetAdsAsyncForTransportline(int tlId)
+        public async Task<IEnumerable<VehicleAdDTO>> GetAdsForTransportlineAsync(int tlId)
         {
             // TODO: Check if there is a better solution for mapping the ads to VehicleAdDTO
-            var temp = await _context.Transportlines
+            var ads = await _context.Transportlines
                 .Where(tl => tl.Id == tlId)
-                .Select(tl => tl.Ads).FirstAsync(); // The select is needed because we only want to convert the Ads, not the whole object
+                .ProjectTo<IEnumerable<VehicleAdDTO>>(_mapper.ConfigurationProvider).FirstAsync();
 
-            return temp.Select(tl => _mapper.Map<VehicleAdDTO>(tl));
+            return ads;
+
         }
 
         /* This is not good a solution and performance is bad as well, but for test data, it works.

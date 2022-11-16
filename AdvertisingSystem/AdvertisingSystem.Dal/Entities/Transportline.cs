@@ -4,7 +4,6 @@
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        //TODO: Consider starttime and endtime as a list<TimeOnly>
         public TimeOnly StartTime { get; set; }
         public TimeOnly EndTime { get; set; }
         //TODO: Maybe use enums with groups

@@ -21,7 +21,7 @@ namespace AdvertisingSystem.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<IEnumerable<VehicleAdDTO>>> GetAdsForTransportline(int id)
         {
-            return (await _vehicleService.GetAdsAsyncForTransportline(id)).ToList();
+            return (await _vehicleService.GetAdsForTransportlineAsync(id)).ToList();
         }
 
         // POST api/<VehicleController>
