@@ -42,14 +42,15 @@ namespace AdvertisingSystem.Dal.Entities
 
         //Navigation properties
         public Advertiser Advertiser { get; set; } = null!;
+        // TODO: Consider multiple bans for one ad
+        public AdBan AdBan { get; set; } = null!;
         public ICollection<Transportline> Transportlines { get; } = new List<Transportline>();
-        //public IEnumerable<Receipt> Receipts { get; } = new List<Receipt>();
 
         public Ad(string paymentMethod, string adURL)
         {
             PaymentMethod = paymentMethod;
             AdURL = adURL;
-        }
 
+        }
     }
 }

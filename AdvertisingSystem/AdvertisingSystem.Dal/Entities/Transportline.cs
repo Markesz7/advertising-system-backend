@@ -15,6 +15,7 @@
         //Navigation properties
         public TransportCompany TransportCompany { get; set; } = null!;
         public ICollection<Ad> Ads { get; } = new List<Ad>();
+        public ICollection<AdBan> AdBans { get; } = new List<AdBan>();
 
         public Transportline(string name, string group)
         {

@@ -10,6 +10,15 @@ namespace AdvertisingSystem.Bll.Dtos
     public record RestrictAdDTO(int Id, bool Enabled, string AdURL);
     public record ToggleAdvertiserDTO(int Id, bool Enabled);
     public record MoneyDTO(int Id, int Amount);
+    public record AdBanDTO
+    {
+        public int Id { get; init; }
+        public TimeOnly? StartTime { get; init; }
+        public TimeOnly? EndTime { get; init; }
+        public List<string> VehicleNames { get; init; } = null!;
+        public int AdId { get; set; }
+    }
+
     public record AdvertiserDTO
     {
         public int Id { get; init; }

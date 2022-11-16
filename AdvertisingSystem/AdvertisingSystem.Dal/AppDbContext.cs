@@ -19,6 +19,7 @@ namespace AdvertisingSystem.Dal
         public DbSet<TransportCompany> TransportCompanys => Set<TransportCompany>();
         public DbSet<AdOrganiser> Adorganisers => Set<AdOrganiser>();
         public DbSet<Advertiser> Advertisers => Set<Advertiser>();
+        public DbSet<AdBan> AdBans => Set<AdBan>();
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -31,6 +32,12 @@ namespace AdvertisingSystem.Dal
             });
 
             builder.Entity<Transportline>(builder =>
+            {
+                builder.Property(t => t.StartTime).HasConversion<TimeOnlyConverter, TimeOnlyComparer>();
+                builder.Property(t => t.EndTime).HasConversion<TimeOnlyConverter, TimeOnlyComparer>();
+            });
+
+            builder.Entity<AdBan>(builder =>
             {
                 builder.Property(t => t.StartTime).HasConversion<TimeOnlyConverter, TimeOnlyComparer>();
                 builder.Property(t => t.EndTime).HasConversion<TimeOnlyConverter, TimeOnlyComparer>();
