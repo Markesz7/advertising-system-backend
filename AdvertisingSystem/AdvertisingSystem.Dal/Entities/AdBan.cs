@@ -7,6 +7,7 @@ namespace AdvertisingSystem.Dal.Entities
         public int Id { get; set; }
         public TimeOnly? StartTime { get; set; }
         public TimeOnly? EndTime { get; set; }
+        public string? SubstituteAdURL { get; set; }
         public string? SerializedVehicleNames { get; set; }
         [NotMapped]
         public List<string>? VehicleNames
