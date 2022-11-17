@@ -19,14 +19,14 @@ namespace AdvertisingSystem.Dal.Entities
         // therefore we can store the possible answers in a ; seperated list.
         //TODO: Check if this is the right way to check the nullable list
         [NotMapped]
-        public List<string>? PlaceGroups
+        public List<string> PlaceGroups
         {
             get
             {
                 if(SerializedPlaceGroups != null)
                     return SerializedPlaceGroups.Split(";").ToList();
 
-                return null;
+                return new List<string>();
             }
 
             set

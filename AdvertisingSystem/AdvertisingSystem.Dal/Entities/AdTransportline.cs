@@ -5,11 +5,7 @@ namespace AdvertisingSystem.Dal.Entities
 {
     public class AdTransportline
     {
-        //public int Id { get; set; }
-
-        //[Key, Column(Order = 0)]
         public int AdId { get; set; }
-        //[Key, Column(Order = 1)]
         public int TransportlineId { get; set; }
         public int? AdBanId { get; set; }
 

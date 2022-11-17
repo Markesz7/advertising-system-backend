@@ -31,6 +31,18 @@ namespace AdvertisingSystem.Bll.Services
         {
             var efAd = _mapper.Map<Ad>(ad);
             _context.Ads.Add(efAd);
+
+            var tls = await _context.Transportlines
+                .Where(adtl => efAd.PlaceGroups.Contains(adtl.Group) &&
+                               (efAd.StartTime == null || adtl.StartTime >= efAd.StartTime) &&
+                               (efAd.EndTime == null || adtl.EndTime <= efAd.EndTime))
+                .ToListAsync();
+
+            foreach (var tl in tls)
+            {
+                _context.AdTransportlines.Add(new AdTransportline { Ad = efAd, Transportline = tl });
+            }
+
             await _context.SaveChangesAsync();
             return await GetAdAsync(efAd.Id);
         }
@@ -52,7 +64,7 @@ namespace AdvertisingSystem.Bll.Services
 
         public async Task<AdDTO> GetAdAsync(int adId)
         {
-            var ad = await _context.Transportlines
+            var ad = await _context.Ads
                 .ProjectTo<AdDTO>(_mapper.ConfigurationProvider)
                 .SingleOrDefaultAsync(t => t.Id == adId);
             // TODO : Check for null with exception

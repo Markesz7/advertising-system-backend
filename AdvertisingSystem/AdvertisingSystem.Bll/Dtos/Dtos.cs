@@ -33,15 +33,15 @@ namespace AdvertisingSystem.Bll.Dtos
 
     public record AdDTO
     {
-        public int Id { get; init; }
-        public int Occurence { get; init; }
+        public int? Id { get; init; }
+        public int? Occurence { get; init; }
         public string PaymentMethod { get; init; } = null!;
         public string AdURL { get; init; } = null!;
         [JsonConverter(typeof(TimeOnlyJSONConverter))]
         public TimeOnly? StartTime { get; init; }
         [JsonConverter(typeof(TimeOnlyJSONConverter))]
         public TimeOnly? EndTime { get; init; }
-        public List<string>? PlaceGroups = null!;
+        public List<string> PlaceGroups { get; init; } = null!;
         public int AdvertiserId { get; init; }
         //public Advertiser Advertiser { get; init; } = null!;
     }
