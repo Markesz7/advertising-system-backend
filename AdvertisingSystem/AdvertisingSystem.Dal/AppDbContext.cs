@@ -20,10 +20,29 @@ namespace AdvertisingSystem.Dal
         public DbSet<AdOrganiser> Adorganisers => Set<AdOrganiser>();
         public DbSet<Advertiser> Advertisers => Set<Advertiser>();
         public DbSet<AdBan> AdBans => Set<AdBan>();
+        public DbSet<AdTransportline> AdTransportlines => Set<AdTransportline>();
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            // Composite keys must be configured with fluent API in EF core
+            builder.Entity<Ad>()
+                .HasMany(ad => ad.Transportlines)
+                .WithMany(tl => tl.Ads)
+                .UsingEntity<AdTransportline>(
+                    j => j
+                        .HasOne(adtl => adtl.Transportline)
+                        .WithMany(t => t.AdTrnasportlines)
+                        .HasForeignKey(adtl => adtl.TransportlineId),
+                    j => j
+                        .HasOne(adtl => adtl.Ad)
+                        .WithMany(ad => ad.AdTransportlines)
+                        .HasForeignKey(adtl => adtl.AdId),
+                    j =>
+                    {
+                        j.HasKey(table => new { table.AdId, table.TransportlineId });
+                    });
 
             builder.Entity<Ad>(builder =>
             {
@@ -51,10 +70,12 @@ namespace AdvertisingSystem.Dal
                 .HasOne(p => p.TransportCompany)
                 .WithMany(p => p.Transportlines)
                 .HasForeignKey(p => p.TransportCompanyId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.ClientSetNull);
+
+            //builder.Entity<AdTransportline>().HasKey(table => new { table.AdId, table.TransportlineId });
 
             SeedData(builder);
-            //await Database.ExecuteSqlRawAsync("TRUNCATE TABLE [Transportlines]");
+            //await Database.ExecuteSqlRawAsync("TRUNCATE TABLE [AdTransportline]");
         }
 
         private void SeedData(ModelBuilder builder)
@@ -133,10 +154,11 @@ namespace AdvertisingSystem.Dal
             //tl.Ads.Add(ad1);
             builder.Entity<Transportline>().HasData(tl);
 
-            builder.Entity("AdTransportline").HasData(new
+            
+            builder.Entity<AdTransportline>().HasData(new
             {
-                AdsId = 2,
-                TransportlinesId = 1
+                AdId = 2,
+                TransportlineId = 1
             });
         }
     }

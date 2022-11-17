@@ -10,12 +10,13 @@
         public string Group { get; set; }
 
         //Foreign keys
-        public int TransportCompanyId { get; set; }
+        public int? TransportCompanyId { get; set; }
 
         //Navigation properties
-        public TransportCompany TransportCompany { get; set; } = null!;
+        public TransportCompany? TransportCompany { get; set; }
+        public ICollection<AdTransportline> AdTrnasportlines { get; } = new List<AdTransportline>();
         public ICollection<Ad> Ads { get; } = new List<Ad>();
-        public ICollection<AdBan> AdBans { get; } = new List<AdBan>();
+        //public ICollection<AdBan> AdBans { get; } = new List<AdBan>();
 
         public Transportline(string name, string group)
         {

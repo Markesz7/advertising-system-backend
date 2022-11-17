@@ -39,11 +39,14 @@ namespace AdvertisingSystem.Dal.Entities
 
         //Foreign key
         public int AdvertiserId { get; set; }
+        // Only one ID is needed for one-to-one relationship
+        //public int AdBanId { get; set; }
 
         //Navigation properties
         public Advertiser Advertiser { get; set; } = null!;
         // TODO: Consider multiple bans for one ad
         public AdBan? AdBan { get; set; }
+        public ICollection<AdTransportline> AdTransportlines { get; } = new List<AdTransportline>();
         public ICollection<Transportline> Transportlines { get; } = new List<Transportline>();
 
         public Ad(string paymentMethod, string adURL)

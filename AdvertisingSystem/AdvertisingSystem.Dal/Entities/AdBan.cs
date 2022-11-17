@@ -10,19 +10,19 @@ namespace AdvertisingSystem.Dal.Entities
         public string? SubstituteAdURL { get; set; }
         public string? SerializedVehicleNames { get; set; }
         [NotMapped]
-        public List<string>? VehicleNames
+        public List<string> VehicleNames
         {
             get
             {
                 if (SerializedVehicleNames != null)
                     return SerializedVehicleNames.Split(";").ToList();
 
-                return null;
+                return new List<string>();
             }
 
             set
             {
-                if(value != null)
+                if (value.Count != 0)
                     SerializedVehicleNames = string.Join(";", value);
                 else SerializedVehicleNames = null;
             }
@@ -32,7 +32,8 @@ namespace AdvertisingSystem.Dal.Entities
 
         //Navigation properties
         public Ad Ad { get; set; } = null!;
-        public ICollection<Transportline> Transportlines { get; } = new List<Transportline>();
+        public ICollection<AdTransportline> AdTransportlines { get; } = new List<AdTransportline>();
+        //public ICollection<Transportline> Transportlines { get; } = new List<Transportline>();
 
     }
 }

@@ -21,9 +21,9 @@ namespace AdvertisingSystem.Bll.Services
         public async Task<IEnumerable<VehicleAdDTO>> GetAdsForTransportlineAsync(int tlId)
         {
             // TODO: Check if there is a better solution for mapping the ads to VehicleAdDTO
-            var ads = await _context.Transportlines
-                .Where(tl => tl.Id == tlId)
-                .ProjectTo<IEnumerable<VehicleAdDTO>>(_mapper.ConfigurationProvider).FirstAsync();
+            var ads = await _context.AdTransportlines
+                .Where(adtl => adtl.TransportlineId == tlId && (adtl.AdBan == null || adtl.AdBan.SubstituteAdURL != null))
+                .ProjectTo<VehicleAdDTO>(_mapper.ConfigurationProvider).ToListAsync();
 
             return ads;
 
