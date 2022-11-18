@@ -4,6 +4,7 @@ using AdvertisingSystem.Dal;
 using AdvertisingSystem.Dal.Entities;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace AdvertisingSystem.Bll.Services
@@ -50,10 +51,10 @@ namespace AdvertisingSystem.Bll.Services
             return await GetAdAsync(efAd.Id);
         }
 
-        public async Task AddMoneyAsync(MoneyDTO advertiser)
+        public async Task AddMoneyAsync(int advertiserId, int money)
         {
-            var efAdvertiser = await _context.Advertisers.FirstAsync(x => x.Id == advertiser.Id);
-            efAdvertiser.Money += advertiser.Amount;
+            var efAdvertiser = await _context.Advertisers.FirstAsync(x => x.Id == advertiserId);
+            efAdvertiser.Money += money;
             _context.Advertisers.Update(efAdvertiser);
             await _context.SaveChangesAsync();
         }
@@ -73,6 +74,33 @@ namespace AdvertisingSystem.Bll.Services
                 .SingleOrDefaultAsync(t => t.Id == adId);
             // TODO : Check for null with exception
             return ad;
+        }
+
+        public async Task<AdvertiserDTO> GetAdvertiserAsync(int advertiserId)
+        {
+            var advertiser = await _context.Advertisers
+                            .ProjectTo<AdvertiserDTO>(_mapper.ConfigurationProvider)
+                            .SingleAsync(t => t.Id == advertiserId);
+
+            return advertiser;
+        }
+
+        public async Task<AdvertiserDTO> InsertAdvertiserAsync(AdvertiserRegisterDTO advertiser)
+        {
+            // TODO: Change this when security is added
+            PasswordHasher<ApplicationUser> ph = new PasswordHasher<ApplicationUser>();
+            var efAdvertiser = new Advertiser
+            {
+                UserName = advertiser.UserName,
+                Email = advertiser.Email,
+                Money = 0,
+                Enabled = true
+            };
+            efAdvertiser.PasswordHash = ph.HashPassword(efAdvertiser, advertiser.Password);
+
+            _context.Advertisers.Add(efAdvertiser);
+            await _context.SaveChangesAsync();
+            return await GetAdvertiserAsync(efAdvertiser.Id);
         }
     }
 }

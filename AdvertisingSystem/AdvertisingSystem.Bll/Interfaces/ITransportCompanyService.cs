@@ -10,5 +10,6 @@ namespace AdvertisingSystem.Bll.Interfaces
         public Task<AdBanDTO> GetAdBanAsync(int adbanId);
         public Task EnableAdAsync(int adbanId);
         public Task<TransportlineDTO> GetTransportlineAsync(int tlId);
+        public Task<IEnumerable<TransportlineDTO>> GetTransportlinesAsync(int tlId);
     }
 }

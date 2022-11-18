@@ -72,10 +72,7 @@ namespace AdvertisingSystem.Dal
                 .HasForeignKey(p => p.TransportCompanyId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
 
-            //builder.Entity<AdTransportline>().HasKey(table => new { table.AdId, table.TransportlineId });
-
             SeedData(builder);
-            //await Database.ExecuteSqlRawAsync("TRUNCATE TABLE [AdTransportline]");
         }
 
         private void SeedData(ModelBuilder builder)
@@ -93,9 +90,19 @@ namespace AdvertisingSystem.Dal
             tc.PasswordHash = ph.HashPassword(tc, "123");
             builder.Entity<TransportCompany>().HasData(tc);
 
-            Advertiser adv = new Advertiser
+            AdOrganiser adOrg = new AdOrganiser
             {
                 Id = 2,
+                Email = "testAdOrg@test.com",
+                EmailConfirmed = true,
+                UserName = "t3"
+            };
+            adOrg.PasswordHash = ph.HashPassword(adOrg, "345");
+            builder.Entity<AdOrganiser>().HasData(adOrg);
+
+            Advertiser adv = new Advertiser
+            {
+                Id = 3,
                 Email = "testAdvertiser@test.com",
                 EmailConfirmed = true,
                 UserName = "t2",
@@ -105,16 +112,6 @@ namespace AdvertisingSystem.Dal
             };
             adv.PasswordHash = ph.HashPassword(adv, "234");
             builder.Entity<Advertiser>().HasData(adv);
-
-            AdOrganiser adOrg = new AdOrganiser
-            {
-                Id = 3,
-                Email = "testAdOrg@test.com",
-                EmailConfirmed = true,
-                UserName = "t3"
-            };
-            adOrg.PasswordHash = ph.HashPassword(adOrg, "345");
-            builder.Entity<AdOrganiser>().HasData(adOrg);
 
             // Seed test revenue
             builder.Entity<Revenue>().HasData(new Revenue
@@ -131,7 +128,8 @@ namespace AdvertisingSystem.Dal
                 Id = 1,
                 PlaceGroups = new List<string>() { "Tram" },
                 Occurence = 0,
-                AdvertiserId = 2
+                TargetOccurence = 30,
+                AdvertiserId = adv.Id
             };
 
             Ad ad2 = new Ad("Wallet", "test2.com")
@@ -139,7 +137,7 @@ namespace AdvertisingSystem.Dal
                 Id = 2,
                 PlaceGroups = new List<string>() { "Bus" },
                 Occurence = 0,
-                AdvertiserId = 2
+                AdvertiserId = adv.Id
             };
             builder.Entity<Ad>().HasData(ad1, ad2);
 
@@ -151,11 +149,9 @@ namespace AdvertisingSystem.Dal
                 EndTime = new TimeOnly(16, 27),
                 TransportCompanyId = 1
             };
-            //tl.Ads.Add(ad1);
             builder.Entity<Transportline>().HasData(tl);
-
-            
-            builder.Entity<AdTransportline>().HasData(new
+          
+            builder.Entity<AdTransportline>().HasData(new AdTransportline
             {
                 AdId = 2,
                 TransportlineId = 1

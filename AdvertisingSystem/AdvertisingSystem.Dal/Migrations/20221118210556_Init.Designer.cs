@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AdvertisingSystem.Dal.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20221117024827_Init")]
+    [Migration("20221118210556_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -56,6 +56,9 @@ namespace AdvertisingSystem.Dal.Migrations
                     b.Property<TimeSpan?>("StartTime")
                         .HasColumnType("time");
 
+                    b.Property<int?>("TargetOccurence")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AdvertiserId");
@@ -67,16 +70,17 @@ namespace AdvertisingSystem.Dal.Migrations
                         {
                             Id = 1,
                             AdURL = "test.com",
-                            AdvertiserId = 2,
+                            AdvertiserId = 3,
                             Occurence = 0,
                             PaymentMethod = "Monthly",
-                            SerializedPlaceGroups = "Tram"
+                            SerializedPlaceGroups = "Tram",
+                            TargetOccurence = 30
                         },
                         new
                         {
                             Id = 2,
                             AdURL = "test2.com",
-                            AdvertiserId = 2,
+                            AdvertiserId = 3,
                             Occurence = 0,
                             PaymentMethod = "Wallet",
                             SerializedPlaceGroups = "Bus"
@@ -457,13 +461,13 @@ namespace AdvertisingSystem.Dal.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 3,
+                            Id = 2,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "0b1b878a-1192-4a47-ac4d-d089ae4c1ea3",
+                            ConcurrencyStamp = "bfe4b498-2974-451a-ace3-92a4efe9f0c1",
                             Email = "testAdOrg@test.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAEAACcQAAAAEJ4JsyATMPCAC7+Je7AMLZJeHDw2FFhXhjs0pePMoW780H/yIyUWd2o7/DdEc8PDJA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEF1dskg7PG8Y9rj4pEICJa+MYkmhrG690/I75aKqaquaNUjMoVo+IF3aLoDJyZF8MQ==",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "t3"
@@ -485,13 +489,13 @@ namespace AdvertisingSystem.Dal.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 2,
+                            Id = 3,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "c2b0db5f-2c8f-4087-a972-0a6e2c858036",
+                            ConcurrencyStamp = "b317d509-519a-4ff9-896f-8262c19cd72a",
                             Email = "testAdvertiser@test.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAEAACcQAAAAEAaeKD4nbeeIOQvrzT5RRuIBQviFrVMOVI5wPxLD/ia/CbjAsKgw0KxjcH9rbCIVUg==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEFB/grqA/Y2QwuBcMof38gZO1yAm8NeUZCXEwD8r2yZIbBCjGekc7bFPieQY4zXaDg==",
                             PhoneNumberConfirmed = true,
                             TwoFactorEnabled = false,
                             UserName = "t2",
@@ -511,11 +515,11 @@ namespace AdvertisingSystem.Dal.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "cd9b6472-1055-4c78-9bc2-a92bc6a547da",
+                            ConcurrencyStamp = "30237430-d210-48a1-8885-9a72c2be56af",
                             Email = "test@test.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAEAACcQAAAAECHZcZEmfb5Xg3iFfdlshYjvi6MQBZr2FpFok7ACKJPPz7fzVwVbZxy64zJCsF9fkQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAELvEYcm6uOeq3/oSnGDuiyz7bEqORkcmskz9jkT05xSTridU8srQUKDmjJ36zJsgXQ==",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "t"
@@ -548,8 +552,7 @@ namespace AdvertisingSystem.Dal.Migrations
                 {
                     b.HasOne("AdvertisingSystem.Dal.Entities.AdBan", "AdBan")
                         .WithMany("AdTransportlines")
-                        .HasForeignKey("AdBanId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("AdBanId");
 
                     b.HasOne("AdvertisingSystem.Dal.Entities.Ad", "Ad")
                         .WithMany("AdTransportlines")

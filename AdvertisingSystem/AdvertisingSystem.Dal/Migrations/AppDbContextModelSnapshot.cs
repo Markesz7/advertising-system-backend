@@ -68,16 +68,17 @@ namespace AdvertisingSystem.Dal.Migrations
                         {
                             Id = 1,
                             AdURL = "test.com",
-                            AdvertiserId = 2,
+                            AdvertiserId = 3,
                             Occurence = 0,
                             PaymentMethod = "Monthly",
-                            SerializedPlaceGroups = "Tram"
+                            SerializedPlaceGroups = "Tram",
+                            TargetOccurence = 30
                         },
                         new
                         {
                             Id = 2,
                             AdURL = "test2.com",
-                            AdvertiserId = 2,
+                            AdvertiserId = 3,
                             Occurence = 0,
                             PaymentMethod = "Wallet",
                             SerializedPlaceGroups = "Bus"
@@ -458,13 +459,13 @@ namespace AdvertisingSystem.Dal.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 3,
+                            Id = 2,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "2e2c499e-3672-4049-9cfb-b973c3c5da52",
+                            ConcurrencyStamp = "bfe4b498-2974-451a-ace3-92a4efe9f0c1",
                             Email = "testAdOrg@test.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAEAACcQAAAAEENi3QuJ9UohYWlwf1xlvF7QJCsUzF18GhRTTmjfDgOOUb7LMSkL5Y0FqJsvX2HUwQ==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEF1dskg7PG8Y9rj4pEICJa+MYkmhrG690/I75aKqaquaNUjMoVo+IF3aLoDJyZF8MQ==",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "t3"
@@ -486,13 +487,13 @@ namespace AdvertisingSystem.Dal.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 2,
+                            Id = 3,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "71e80787-1e3e-449d-a43c-2b8595f6283a",
+                            ConcurrencyStamp = "b317d509-519a-4ff9-896f-8262c19cd72a",
                             Email = "testAdvertiser@test.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAEAACcQAAAAEEXtjCnuxvol8YlrD0CtT7eHVKYQiiHpAHquRplQAOyiHiQoi8g/LhHDZgjhdJG4NA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEFB/grqA/Y2QwuBcMof38gZO1yAm8NeUZCXEwD8r2yZIbBCjGekc7bFPieQY4zXaDg==",
                             PhoneNumberConfirmed = true,
                             TwoFactorEnabled = false,
                             UserName = "t2",
@@ -512,11 +513,11 @@ namespace AdvertisingSystem.Dal.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "f144090e-09a3-45c7-b16b-1984c6e23a00",
+                            ConcurrencyStamp = "30237430-d210-48a1-8885-9a72c2be56af",
                             Email = "test@test.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAEAACcQAAAAEKmF9gVApKsZ41GRKsF45f95/0UdJ7dpIeAz4RsFvrY9plgMJxOjh6G/r/dCmooJ4g==",
+                            PasswordHash = "AQAAAAEAACcQAAAAELvEYcm6uOeq3/oSnGDuiyz7bEqORkcmskz9jkT05xSTridU8srQUKDmjJ36zJsgXQ==",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "t"

@@ -81,6 +81,7 @@ namespace AdvertisingSystem.Dal.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Occurence = table.Column<int>(type: "int", nullable: false),
+                    TargetOccurence = table.Column<int>(type: "int", nullable: true),
                     PaymentMethod = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AdURL = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     StartTime = table.Column<TimeSpan>(type: "time", nullable: true),
@@ -286,8 +287,7 @@ namespace AdvertisingSystem.Dal.Migrations
                         name: "FK_AdTransportlines_AdBans_AdBanId",
                         column: x => x.AdBanId,
                         principalTable: "AdBans",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_AdTransportlines_Ads_AdId",
                         column: x => x.AdId,
@@ -305,25 +305,25 @@ namespace AdvertisingSystem.Dal.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Discriminator", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { 3, 0, "0b1b878a-1192-4a47-ac4d-d089ae4c1ea3", "AdOrganiser", "testAdOrg@test.com", true, false, null, null, null, "AQAAAAEAACcQAAAAEJ4JsyATMPCAC7+Je7AMLZJeHDw2FFhXhjs0pePMoW780H/yIyUWd2o7/DdEc8PDJA==", null, false, null, false, "t3" });
+                values: new object[] { 2, 0, "bfe4b498-2974-451a-ace3-92a4efe9f0c1", "AdOrganiser", "testAdOrg@test.com", true, false, null, null, null, "AQAAAAEAACcQAAAAEF1dskg7PG8Y9rj4pEICJa+MYkmhrG690/I75aKqaquaNUjMoVo+IF3aLoDJyZF8MQ==", null, false, null, false, "t3" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Discriminator", "Email", "EmailConfirmed", "Enabled", "LockoutEnabled", "LockoutEnd", "Money", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { 2, 0, "c2b0db5f-2c8f-4087-a972-0a6e2c858036", "Advertiser", "testAdvertiser@test.com", true, true, false, null, 100, null, null, "AQAAAAEAACcQAAAAEAaeKD4nbeeIOQvrzT5RRuIBQviFrVMOVI5wPxLD/ia/CbjAsKgw0KxjcH9rbCIVUg==", null, true, null, false, "t2" });
+                values: new object[] { 3, 0, "b317d509-519a-4ff9-896f-8262c19cd72a", "Advertiser", "testAdvertiser@test.com", true, true, false, null, 100, null, null, "AQAAAAEAACcQAAAAEFB/grqA/Y2QwuBcMof38gZO1yAm8NeUZCXEwD8r2yZIbBCjGekc7bFPieQY4zXaDg==", null, true, null, false, "t2" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Discriminator", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { 1, 0, "cd9b6472-1055-4c78-9bc2-a92bc6a547da", "TransportCompany", "test@test.com", true, false, null, null, null, "AQAAAAEAACcQAAAAECHZcZEmfb5Xg3iFfdlshYjvi6MQBZr2FpFok7ACKJPPz7fzVwVbZxy64zJCsF9fkQ==", null, false, null, false, "t" });
+                values: new object[] { 1, 0, "30237430-d210-48a1-8885-9a72c2be56af", "TransportCompany", "test@test.com", true, false, null, null, null, "AQAAAAEAACcQAAAAELvEYcm6uOeq3/oSnGDuiyz7bEqORkcmskz9jkT05xSTridU8srQUKDmjJ36zJsgXQ==", null, false, null, false, "t" });
 
             migrationBuilder.InsertData(
                 table: "Ads",
-                columns: new[] { "Id", "AdURL", "AdvertiserId", "EndTime", "Occurence", "PaymentMethod", "PlaceGroups", "StartTime" },
+                columns: new[] { "Id", "AdURL", "AdvertiserId", "EndTime", "Occurence", "PaymentMethod", "PlaceGroups", "StartTime", "TargetOccurence" },
                 values: new object[,]
                 {
-                    { 1, "test.com", 2, null, 0, "Monthly", "Tram", null },
-                    { 2, "test2.com", 2, null, 0, "Wallet", "Bus", null }
+                    { 1, "test.com", 3, null, 0, "Monthly", "Tram", null, 30 },
+                    { 2, "test2.com", 3, null, 0, "Wallet", "Bus", null, null }
                 });
 
             migrationBuilder.InsertData(

@@ -55,7 +55,7 @@ namespace AdvertisingSystem.Bll.Services
         public async Task GetTransportlinesByNamesAndTimerangeAsync(AdBan adban)
         {
             List<AdTransportline> results;
-            if(adban.StartTime != null && adban.VehicleNames != null)
+            if(adban.StartTime != null && adban.VehicleNames.Count != 0)
             {
                 results = await _context.AdTransportlines
                     .Where(x => x.Transportline.StartTime >= adban.StartTime &&
@@ -85,14 +85,6 @@ namespace AdvertisingSystem.Bll.Services
                 .Where(r => r.TransportCompanyId == userId)
                 .ProjectTo<RevenueDTO>(_mapper.ConfigurationProvider)
                 .ToListAsync();
-
-            /*
-            return await _context.TransportCompanys
-                .Include("Revenues")
-                .Where(tc => tc.Id == userId)
-                .ProjectTo<RevenueDTO>(_mapper.ConfigurationProvider)
-                .ToListAsync();
-            */
         }
 
         public async Task<TransportlineDTO> GetTransportlineAsync(int tlId)
@@ -113,5 +105,14 @@ namespace AdvertisingSystem.Bll.Services
             return await GetTransportlineAsync(efTransportline.Id);
         }
 
+        public async Task<IEnumerable<TransportlineDTO>> GetTransportlinesAsync(int tlId)
+        {
+            var transportlines = await _context.Transportlines
+                .Where(t => t.Id == tlId)
+                .ProjectTo<TransportlineDTO>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            return transportlines;
+        }
     }
 }

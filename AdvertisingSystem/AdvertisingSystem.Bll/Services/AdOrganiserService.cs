@@ -84,6 +84,7 @@ namespace AdvertisingSystem.Bll.Services
             await _context.SaveChangesAsync();
         }
 
+        // TODO
         public async Task ToggleUserAsync(ToggleAdvertiserDTO advertiser)
         {
             var efAdvertiser = _mapper.Map<Advertiser>(advertiser);

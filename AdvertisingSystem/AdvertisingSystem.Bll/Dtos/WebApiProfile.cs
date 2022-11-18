@@ -1,6 +1,5 @@
 ﻿using AdvertisingSystem.Dal.Entities;
 using AutoMapper;
-using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 
 namespace AdvertisingSystem.Bll.Dtos
 {
@@ -11,8 +10,8 @@ namespace AdvertisingSystem.Bll.Dtos
             // This creates a two way map.
             CreateMap<Ad, AdDTO>().ReverseMap();
             CreateMap<Transportline, TransportlineDTO>().ReverseMap();
-            // TODO: The advertiser ads should be AdDTO and not Ad entity
             CreateMap<Advertiser, AdvertiserDTO>().ReverseMap();
+            //CreateMap<AdvertiserRegisterDTO, Advertiser>();
             CreateMap<Receipt, ReceiptDTO>().ReverseMap();
             CreateMap<TransportCompany, RevenueDTO>();
             CreateMap<Revenue, RevenueDTO>();
