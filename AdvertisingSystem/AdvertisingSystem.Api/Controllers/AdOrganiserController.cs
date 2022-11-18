@@ -33,6 +33,14 @@ namespace AdvertisingSystem.Api.Controllers
             return NoContent();
         }
 
+        // POST api/<AdOrganiser>/dobooking
+        [HttpPost("dobooking")]
+        public async Task<ActionResult> DoBooking()
+        {
+            await _adOrganiserService.DoBookingAsync();
+            return NoContent();
+        }
+
         // DELETE api/<AdOrganiser>/5
         [HttpDelete("deletead/{id}")]
         public async Task<ActionResult> DeleteAd(int id)

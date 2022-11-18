@@ -27,14 +27,15 @@ namespace AdvertisingSystem.Bll.Dtos
         public string Email { get; init; } = null!;
         public int Money { get; init; }
         public bool Enabled { get; init; }
-        public List<Ad> Ads { get; init; } = null!;
-        public List<Receipt> Receipts { get; init; } = null!;
+        public List<AdDTO> Ads { get; init; } = null!;
+        public List<ReceiptDTO> Receipts { get; init; } = null!;
     }
 
     public record AdDTO
     {
         public int? Id { get; init; }
         public int? Occurence { get; init; }
+        public int? TargetOccurence { get; init; }
         public string PaymentMethod { get; init; } = null!;
         public string AdURL { get; init; } = null!;
         [JsonConverter(typeof(TimeOnlyJSONConverter))]

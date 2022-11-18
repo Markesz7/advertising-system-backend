@@ -30,10 +30,13 @@ namespace AdvertisingSystem.Bll.Services
         public async Task<AdDTO> InsertAdAsync(AdDTO ad)
         {
             var efAd = _mapper.Map<Ad>(ad);
+            efAd.Occurence = 0;
+            if (efAd.PaymentMethod == "Wallet")
+                efAd.TargetOccurence = null;
             _context.Ads.Add(efAd);
 
             var tls = await _context.Transportlines
-                .Where(adtl => efAd.PlaceGroups.Contains(adtl.Group) &&
+                .Where(adtl => (efAd.PlaceGroups.Count == 0 || efAd.PlaceGroups.Contains(adtl.Group)) &&
                                (efAd.StartTime == null || adtl.StartTime >= efAd.StartTime) &&
                                (efAd.EndTime == null || adtl.EndTime <= efAd.EndTime))
                 .ToListAsync();
@@ -49,8 +52,9 @@ namespace AdvertisingSystem.Bll.Services
 
         public async Task AddMoneyAsync(MoneyDTO advertiser)
         {
-            var efAdvertiser = _mapper.Map<Advertiser>(advertiser);
-            _context.Advertisers.Attach(efAdvertiser).Property(adv => adv.Money).IsModified = true;
+            var efAdvertiser = await _context.Advertisers.FirstAsync(x => x.Id == advertiser.Id);
+            efAdvertiser.Money += advertiser.Amount;
+            _context.Advertisers.Update(efAdvertiser);
             await _context.SaveChangesAsync();
         }
 

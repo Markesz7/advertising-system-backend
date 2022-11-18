@@ -6,7 +6,7 @@ namespace AdvertisingSystem.Dal.Entities
     {
         public int Id { get; set; }
         public int Occurence { get; set; }
-        //TODO: maybe do this with enums (probably preferred) or with simple boolean
+        public int? TargetOccurence { get; set; }
         public string PaymentMethod { get; set; }
         //Name can't be only URL (and url for parameter), because it causes problems with EF Core
         public string AdURL { get; set; }
@@ -31,7 +31,7 @@ namespace AdvertisingSystem.Dal.Entities
 
             set
             {
-                if (value != null)
+                if (value.Count != 0)
                     SerializedPlaceGroups = string.Join(";", value);
                 else SerializedPlaceGroups = null;
             }
