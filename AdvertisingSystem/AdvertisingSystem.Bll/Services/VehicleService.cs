@@ -23,10 +23,10 @@ namespace AdvertisingSystem.Bll.Services
             // TODO: Check if there is a better solution for mapping the ads to VehicleAdDTO
             var ads = await _context.AdTransportlines
                 .Where(adtl => adtl.TransportlineId == tlId && (adtl.AdBan == null || adtl.AdBan.SubstituteAdURL != null))
+                .Where(adtl => adtl.Ad.PaymentMethod != "Wallet" || adtl.Ad.Advertiser.Money > 0)
                 .ProjectTo<VehicleAdDTO>(_mapper.ConfigurationProvider).ToListAsync();
 
             return ads;
-
         }
 
         /* This is not good a solution and performance is bad as well, but for test data, it works.
