@@ -19,10 +19,30 @@ namespace AdvertisingSystem.Dal
         public DbSet<TransportCompany> TransportCompanys => Set<TransportCompany>();
         public DbSet<AdOrganiser> Adorganisers => Set<AdOrganiser>();
         public DbSet<Advertiser> Advertisers => Set<Advertiser>();
+        public DbSet<AdBan> AdBans => Set<AdBan>();
+        public DbSet<AdTransportline> AdTransportlines => Set<AdTransportline>();
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            // Composite keys must be configured with fluent API in EF core
+            builder.Entity<Ad>()
+                .HasMany(ad => ad.Transportlines)
+                .WithMany(tl => tl.Ads)
+                .UsingEntity<AdTransportline>(
+                    j => j
+                        .HasOne(adtl => adtl.Transportline)
+                        .WithMany(t => t.AdTrnasportlines)
+                        .HasForeignKey(adtl => adtl.TransportlineId),
+                    j => j
+                        .HasOne(adtl => adtl.Ad)
+                        .WithMany(ad => ad.AdTransportlines)
+                        .HasForeignKey(adtl => adtl.AdId),
+                    j =>
+                    {
+                        j.HasKey(table => new { table.AdId, table.TransportlineId });
+                    });
 
             builder.Entity<Ad>(builder =>
             {
@@ -36,6 +56,12 @@ namespace AdvertisingSystem.Dal
                 builder.Property(t => t.EndTime).HasConversion<TimeOnlyConverter, TimeOnlyComparer>();
             });
 
+            builder.Entity<AdBan>(builder =>
+            {
+                builder.Property(t => t.StartTime).HasConversion<TimeOnlyConverter, TimeOnlyComparer>();
+                builder.Property(t => t.EndTime).HasConversion<TimeOnlyConverter, TimeOnlyComparer>();
+            });
+
             // Because now I use the TPH (Table-per-hierarchy) database inheritance, every user is in one table
             // so SQL server thinks if we delete a user, then it has two delete cascade paths (ad and transportline line)
             // For now to fix this, I use restrict delete for the transportlines to break one cascade path.
@@ -44,10 +70,9 @@ namespace AdvertisingSystem.Dal
                 .HasOne(p => p.TransportCompany)
                 .WithMany(p => p.Transportlines)
                 .HasForeignKey(p => p.TransportCompanyId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.ClientSetNull);
 
             SeedData(builder);
-            //await Database.ExecuteSqlRawAsync("TRUNCATE TABLE [Transportlines]");
         }
 
         private void SeedData(ModelBuilder builder)
@@ -65,9 +90,19 @@ namespace AdvertisingSystem.Dal
             tc.PasswordHash = ph.HashPassword(tc, "123");
             builder.Entity<TransportCompany>().HasData(tc);
 
-            Advertiser adv = new Advertiser
+            AdOrganiser adOrg = new AdOrganiser
             {
                 Id = 2,
+                Email = "testAdOrg@test.com",
+                EmailConfirmed = true,
+                UserName = "t3"
+            };
+            adOrg.PasswordHash = ph.HashPassword(adOrg, "345");
+            builder.Entity<AdOrganiser>().HasData(adOrg);
+
+            Advertiser adv = new Advertiser
+            {
+                Id = 3,
                 Email = "testAdvertiser@test.com",
                 EmailConfirmed = true,
                 UserName = "t2",
@@ -77,16 +112,6 @@ namespace AdvertisingSystem.Dal
             };
             adv.PasswordHash = ph.HashPassword(adv, "234");
             builder.Entity<Advertiser>().HasData(adv);
-
-            AdOrganiser adOrg = new AdOrganiser
-            {
-                Id = 3,
-                Email = "testAdOrg@test.com",
-                EmailConfirmed = true,
-                UserName = "t3"
-            };
-            adOrg.PasswordHash = ph.HashPassword(adOrg, "345");
-            builder.Entity<AdOrganiser>().HasData(adOrg);
 
             // Seed test revenue
             builder.Entity<Revenue>().HasData(new Revenue
@@ -103,7 +128,8 @@ namespace AdvertisingSystem.Dal
                 Id = 1,
                 PlaceGroups = new List<string>() { "Tram" },
                 Occurence = 0,
-                AdvertiserId = 2
+                TargetOccurence = 30,
+                AdvertiserId = adv.Id
             };
 
             Ad ad2 = new Ad("Wallet", "test2.com")
@@ -111,7 +137,7 @@ namespace AdvertisingSystem.Dal
                 Id = 2,
                 PlaceGroups = new List<string>() { "Bus" },
                 Occurence = 0,
-                AdvertiserId = 2
+                AdvertiserId = adv.Id
             };
             builder.Entity<Ad>().HasData(ad1, ad2);
 
@@ -123,13 +149,12 @@ namespace AdvertisingSystem.Dal
                 EndTime = new TimeOnly(16, 27),
                 TransportCompanyId = 1
             };
-            //tl.Ads.Add(ad1);
             builder.Entity<Transportline>().HasData(tl);
-
-            builder.Entity("AdTransportline").HasData(new
+          
+            builder.Entity<AdTransportline>().HasData(new AdTransportline
             {
-                AdsId = 2,
-                TransportlinesId = 1
+                AdId = 2,
+                TransportlineId = 1
             });
         }
     }

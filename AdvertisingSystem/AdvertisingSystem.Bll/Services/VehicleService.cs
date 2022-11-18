@@ -18,14 +18,15 @@ namespace AdvertisingSystem.Bll.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<VehicleAdDTO>> GetAdsAsyncForTransportline(int tlId)
+        public async Task<IEnumerable<VehicleAdDTO>> GetAdsForTransportlineAsync(int tlId)
         {
             // TODO: Check if there is a better solution for mapping the ads to VehicleAdDTO
-            var temp = await _context.Transportlines
-                .Where(tl => tl.Id == tlId)
-                .Select(tl => tl.Ads).FirstAsync(); // The select is needed because we only want to convert the Ads, not the whole object
+            var ads = await _context.AdTransportlines
+                .Where(adtl => adtl.TransportlineId == tlId && (adtl.AdBan == null || adtl.AdBan.SubstituteAdURL != null))
+                .Where(adtl => adtl.Ad.PaymentMethod != "Wallet" || adtl.Ad.Advertiser.Money > 0)
+                .ProjectTo<VehicleAdDTO>(_mapper.ConfigurationProvider).ToListAsync();
 
-            return temp.Select(tl => _mapper.Map<VehicleAdDTO>(tl));
+            return ads;
         }
 
         /* This is not good a solution and performance is bad as well, but for test data, it works.
@@ -39,10 +40,21 @@ namespace AdvertisingSystem.Bll.Services
             var adsIDList = ads.Select(ad => ad.Id).ToList();
             var selectedAds = await _context.Ads
                 .Where(ad => adsIDList.Contains(ad.Id)).ToListAsync();
-            foreach(var ad in selectedAds)
-                ad.Occurence += ads.Where(x => x.Id == ad.Id).First().Occurence;
 
-            _context.UpdateRange(selectedAds);
+            foreach (var ad in selectedAds)
+            {
+                var adOccurence = ads.Where(x => x.Id == ad.Id).First().Occurence;
+
+                if (ad.PaymentMethod == "Wallet")
+                {
+                    var advertiser = await _context.Advertisers.SingleAsync(x => x.Id == ad.Id);
+                    advertiser.Money -= adOccurence * 100;
+                    _context.Advertisers.Update(advertiser);
+                }
+                ad.Occurence += adOccurence;
+            }
+
+            _context.Ads.UpdateRange(selectedAds);
             await _context.SaveChangesAsync();
         }
     }

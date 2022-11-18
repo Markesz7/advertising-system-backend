@@ -2,6 +2,7 @@
 using AdvertisingSystem.Bll.Interfaces;
 using AdvertisingSystem.Dal;
 using AdvertisingSystem.Dal.Entities;
+using AdvertisingSystem.Dal.Helper;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
@@ -19,10 +20,63 @@ namespace AdvertisingSystem.Bll.Services
             _mapper = mapper;
         }
 
-        // TODO: Do this later, this is not well implemented in the database
-        public Task DisableAdAsync(RestrictAdDTO ad)
+        public async Task<AdBanDTO> BanAdAsync(AdBanDTO adban)
         {
-            throw new NotImplementedException();
+            var efAdban = _mapper.Map<AdBan>(adban);
+            await GetTransportlinesByNamesAndTimerangeAsync(efAdban);
+
+            _context.AdBans.Add(efAdban);
+            await _context.SaveChangesAsync();
+            return await GetAdBanAsync(efAdban.Id);
+        }
+
+        public async Task<AdBanDTO> GetAdBanAsync(int adbanId)
+        {
+            // TODO: Check for null reference
+            return await _context.AdBans
+                .ProjectTo<AdBanDTO>(_mapper.ConfigurationProvider)
+                .SingleOrDefaultAsync(adban => adban.Id == adbanId);
+        }
+
+        public async Task EnableAdAsync(int adbanId)
+        {
+            var adtls = await _context.AdTransportlines
+                .Where(adtl => adtl.AdBanId == adbanId).ToListAsync();
+
+            foreach(var adtl in adtls)
+            {
+                adtl.AdBanId = null;
+            }
+            _context.AdTransportlines.UpdateRange(adtls);
+            _context.AdBans.Remove(new AdBan() { Id = adbanId });
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task GetTransportlinesByNamesAndTimerangeAsync(AdBan adban)
+        {
+            List<AdTransportline> results;
+            if(adban.StartTime != null && adban.VehicleNames.Count != 0)
+            {
+                results = await _context.AdTransportlines
+                    .Where(x => x.Transportline.StartTime >= adban.StartTime &&
+                                x.Transportline.EndTime <= adban.EndTime && 
+                                adban.VehicleNames.Contains(x.Transportline.Name))
+                    .ToListAsync();
+            }
+            else if(adban.VehicleNames.Count != 0)
+            {
+                results = await _context.AdTransportlines
+                    .Where(x => adban.VehicleNames.Contains(x.Transportline.Name))
+                    .ToListAsync();
+            }
+            else
+            {
+                results = await _context.AdTransportlines
+                    .Where(x => x.Transportline.StartTime >= adban.StartTime && 
+                                x.Transportline.EndTime <= adban.EndTime)
+                    .ToListAsync();
+            }
+            adban.AdTransportlines.AddRange(results);
         }
 
         public async Task<IEnumerable<RevenueDTO>> GetRevenuesByCompanyAsync(int userId)
@@ -31,14 +85,6 @@ namespace AdvertisingSystem.Bll.Services
                 .Where(r => r.TransportCompanyId == userId)
                 .ProjectTo<RevenueDTO>(_mapper.ConfigurationProvider)
                 .ToListAsync();
-
-            /*
-            return await _context.TransportCompanys
-                .Include("Revenues")
-                .Where(tc => tc.Id == userId)
-                .ProjectTo<RevenueDTO>(_mapper.ConfigurationProvider)
-                .ToListAsync();
-            */
         }
 
         public async Task<TransportlineDTO> GetTransportlineAsync(int tlId)
@@ -59,5 +105,14 @@ namespace AdvertisingSystem.Bll.Services
             return await GetTransportlineAsync(efTransportline.Id);
         }
 
+        public async Task<IEnumerable<TransportlineDTO>> GetTransportlinesAsync(int tlId)
+        {
+            var transportlines = await _context.Transportlines
+                .Where(t => t.Id == tlId)
+                .ProjectTo<TransportlineDTO>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+
+            return transportlines;
+        }
     }
 }

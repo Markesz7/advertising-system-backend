@@ -4,12 +4,23 @@ using System.Text.Json.Serialization;
 
 namespace AdvertisingSystem.Bll.Dtos
 {
+    public record AdvertiserRegisterDTO(string UserName, string Password, string Email);
     public record RevenueDTO(int Id, DateTime Date, int Amount);
     public record ReceiptDTO(int Id, DateTime Date, int Price);
     public record VehicleAdDTO(int Id, int Occurence, string AdURL);
-    public record RestrictAdDTO(int Id, bool Enabled, string AdURL);
     public record ToggleAdvertiserDTO(int Id, bool Enabled);
     public record MoneyDTO(int Id, int Amount);
+    public record AdBanDTO
+    {
+        public int Id { get; init; }
+        [JsonConverter(typeof(TimeOnlyJSONConverter))]
+        public TimeOnly? StartTime { get; init; }
+        [JsonConverter(typeof(TimeOnlyJSONConverter))]
+        public TimeOnly? EndTime { get; init; }
+        public List<string> VehicleNames { get; init; } = null!;
+        public int AdId { get; set; }
+    }
+
     public record AdvertiserDTO
     {
         public int Id { get; init; }
@@ -17,21 +28,22 @@ namespace AdvertisingSystem.Bll.Dtos
         public string Email { get; init; } = null!;
         public int Money { get; init; }
         public bool Enabled { get; init; }
-        public List<Ad> Ads { get; init; } = null!;
-        public List<Receipt> Receipts { get; init; } = null!;
+        public List<AdDTO> Ads { get; init; } = null!;
+        public List<ReceiptDTO> Receipts { get; init; } = null!;
     }
 
     public record AdDTO
     {
-        public int Id { get; init; }
-        public int Occurence { get; init; }
+        public int? Id { get; init; }
+        public int? Occurence { get; init; }
+        public int? TargetOccurence { get; init; }
         public string PaymentMethod { get; init; } = null!;
         public string AdURL { get; init; } = null!;
         [JsonConverter(typeof(TimeOnlyJSONConverter))]
         public TimeOnly? StartTime { get; init; }
         [JsonConverter(typeof(TimeOnlyJSONConverter))]
         public TimeOnly? EndTime { get; init; }
-        public List<string>? PlaceGroups = null!;
+        public List<string> PlaceGroups { get; init; } = null!;
         public int AdvertiserId { get; init; }
         //public Advertiser Advertiser { get; init; } = null!;
     }

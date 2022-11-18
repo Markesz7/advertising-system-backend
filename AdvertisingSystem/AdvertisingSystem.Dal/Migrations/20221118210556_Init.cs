@@ -81,6 +81,7 @@ namespace AdvertisingSystem.Dal.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Occurence = table.Column<int>(type: "int", nullable: false),
+                    TargetOccurence = table.Column<int>(type: "int", nullable: true),
                     PaymentMethod = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AdURL = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     StartTime = table.Column<TimeSpan>(type: "time", nullable: true),
@@ -206,7 +207,7 @@ namespace AdvertisingSystem.Dal.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Revenue",
+                name: "Revenues",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -217,9 +218,9 @@ namespace AdvertisingSystem.Dal.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Revenue", x => x.Id);
+                    table.PrimaryKey("PK_Revenues", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Revenue_AspNetUsers_TransportCompanyId",
+                        name: "FK_Revenues_AspNetUsers_TransportCompanyId",
                         column: x => x.TransportCompanyId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -236,7 +237,7 @@ namespace AdvertisingSystem.Dal.Migrations
                     StartTime = table.Column<TimeSpan>(type: "time", nullable: false),
                     EndTime = table.Column<TimeSpan>(type: "time", nullable: false),
                     Group = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TransportCompanyId = table.Column<int>(type: "int", nullable: false)
+                    TransportCompanyId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -245,33 +246,106 @@ namespace AdvertisingSystem.Dal.Migrations
                         name: "FK_Transportlines_AspNetUsers_TransportCompanyId",
                         column: x => x.TransportCompanyId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
-                name: "AdTransportline",
+                name: "AdBans",
                 columns: table => new
                 {
-                    AdsId = table.Column<int>(type: "int", nullable: false),
-                    TransportlinesId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    StartTime = table.Column<TimeSpan>(type: "time", nullable: true),
+                    EndTime = table.Column<TimeSpan>(type: "time", nullable: true),
+                    SubstituteAdURL = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SerializedVehicleNames = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AdId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AdTransportline", x => new { x.AdsId, x.TransportlinesId });
+                    table.PrimaryKey("PK_AdBans", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AdTransportline_Ads_AdsId",
-                        column: x => x.AdsId,
+                        name: "FK_AdBans_Ads_AdId",
+                        column: x => x.AdId,
+                        principalTable: "Ads",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AdTransportlines",
+                columns: table => new
+                {
+                    AdId = table.Column<int>(type: "int", nullable: false),
+                    TransportlineId = table.Column<int>(type: "int", nullable: false),
+                    AdBanId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AdTransportlines", x => new { x.AdId, x.TransportlineId });
+                    table.ForeignKey(
+                        name: "FK_AdTransportlines_AdBans_AdBanId",
+                        column: x => x.AdBanId,
+                        principalTable: "AdBans",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_AdTransportlines_Ads_AdId",
+                        column: x => x.AdId,
                         principalTable: "Ads",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AdTransportline_Transportlines_TransportlinesId",
-                        column: x => x.TransportlinesId,
+                        name: "FK_AdTransportlines_Transportlines_TransportlineId",
+                        column: x => x.TransportlineId,
                         principalTable: "Transportlines",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Discriminator", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { 2, 0, "bfe4b498-2974-451a-ace3-92a4efe9f0c1", "AdOrganiser", "testAdOrg@test.com", true, false, null, null, null, "AQAAAAEAACcQAAAAEF1dskg7PG8Y9rj4pEICJa+MYkmhrG690/I75aKqaquaNUjMoVo+IF3aLoDJyZF8MQ==", null, false, null, false, "t3" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Discriminator", "Email", "EmailConfirmed", "Enabled", "LockoutEnabled", "LockoutEnd", "Money", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { 3, 0, "b317d509-519a-4ff9-896f-8262c19cd72a", "Advertiser", "testAdvertiser@test.com", true, true, false, null, 100, null, null, "AQAAAAEAACcQAAAAEFB/grqA/Y2QwuBcMof38gZO1yAm8NeUZCXEwD8r2yZIbBCjGekc7bFPieQY4zXaDg==", null, true, null, false, "t2" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Discriminator", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { 1, 0, "30237430-d210-48a1-8885-9a72c2be56af", "TransportCompany", "test@test.com", true, false, null, null, null, "AQAAAAEAACcQAAAAELvEYcm6uOeq3/oSnGDuiyz7bEqORkcmskz9jkT05xSTridU8srQUKDmjJ36zJsgXQ==", null, false, null, false, "t" });
+
+            migrationBuilder.InsertData(
+                table: "Ads",
+                columns: new[] { "Id", "AdURL", "AdvertiserId", "EndTime", "Occurence", "PaymentMethod", "PlaceGroups", "StartTime", "TargetOccurence" },
+                values: new object[,]
+                {
+                    { 1, "test.com", 3, null, 0, "Monthly", "Tram", null, 30 },
+                    { 2, "test2.com", 3, null, 0, "Wallet", "Bus", null, null }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Revenues",
+                columns: new[] { "Id", "Amount", "Date", "TransportCompanyId" },
+                values: new object[] { 1, 5000, new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1 });
+
+            migrationBuilder.InsertData(
+                table: "Transportlines",
+                columns: new[] { "Id", "EndTime", "Group", "Name", "StartTime", "TransportCompanyId" },
+                values: new object[] { 1, new TimeSpan(0, 16, 27, 0, 0), "Bus", "5A", new TimeSpan(0, 15, 42, 0, 0), 1 });
+
+            migrationBuilder.InsertData(
+                table: "AdTransportlines",
+                columns: new[] { "AdId", "TransportlineId", "AdBanId" },
+                values: new object[] { 2, 1, null });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AdBans_AdId",
+                table: "AdBans",
+                column: "AdId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Ads_AdvertiserId",
@@ -279,9 +353,14 @@ namespace AdvertisingSystem.Dal.Migrations
                 column: "AdvertiserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AdTransportline_TransportlinesId",
-                table: "AdTransportline",
-                column: "TransportlinesId");
+                name: "IX_AdTransportlines_AdBanId",
+                table: "AdTransportlines",
+                column: "AdBanId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AdTransportlines_TransportlineId",
+                table: "AdTransportlines",
+                column: "TransportlineId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -328,8 +407,8 @@ namespace AdvertisingSystem.Dal.Migrations
                 column: "AdvertiserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Revenue_TransportCompanyId",
-                table: "Revenue",
+                name: "IX_Revenues_TransportCompanyId",
+                table: "Revenues",
                 column: "TransportCompanyId");
 
             migrationBuilder.CreateIndex(
@@ -341,7 +420,7 @@ namespace AdvertisingSystem.Dal.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "AdTransportline");
+                name: "AdTransportlines");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
@@ -362,16 +441,19 @@ namespace AdvertisingSystem.Dal.Migrations
                 name: "Receipts");
 
             migrationBuilder.DropTable(
-                name: "Revenue");
+                name: "Revenues");
 
             migrationBuilder.DropTable(
-                name: "Ads");
+                name: "AdBans");
 
             migrationBuilder.DropTable(
                 name: "Transportlines");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Ads");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

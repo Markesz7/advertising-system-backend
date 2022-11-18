@@ -17,23 +17,38 @@ namespace AdvertisingSystem.Api.Controllers
             _advertiserService = advertiserService;
         }
 
+        // GET api/<AdvertiserController>/register
+        [HttpPost("register")]
+        public async Task<ActionResult<AdvertiserDTO>> RegisterAdvertiser([FromBody] AdvertiserRegisterDTO advertiser)
+        {
+            return await _advertiserService.InsertAdvertiserAsync(advertiser);
+        }
+
         // GET api/<AdvertiserController>/5
-        [HttpGet("ads/{id}")]
+        [HttpGet("{id}")]
+        public async Task<ActionResult<AdvertiserDTO>> GetAdvertiser(int id)
+        {
+            var advertiser = await _advertiserService.GetAdvertiserAsync(id);
+            return CreatedAtAction(nameof(GetAdvertiser), new { Id = advertiser.Id }, advertiser);
+        }
+
+        // GET api/<AdvertiserController>/5/ads
+        [HttpGet("{id}/ads")]
         public async Task<ActionResult<IEnumerable<AdDTO>>> GetAdsByUser(int id)
         {
             var ads = await _advertiserService.GetAdsByUserAsync(id);
             return ads.ToList();
         }
 
-        // GET api/<AdvertiserController>/receipts/5
-        [HttpGet("receipts/{id}")]
+        // GET api/<AdvertiserController>/5/receipts
+        [HttpGet("{id}/receipts")]
         public async Task<ActionResult<IEnumerable<ReceiptDTO>>> GetReceiptsByUser(int id)
         {
             var receipts = await _advertiserService.GetReceiptsByUser(id);
             return receipts.ToList();
         }
 
-        // POST api/<AdvertiserController>/PostAd
+        // POST api/<AdvertiserController>/createad
         [HttpPost("createad")]
         public async Task<ActionResult<AdDTO>> PostAd([FromBody] AdDTO ad)
         {
@@ -41,11 +56,11 @@ namespace AdvertisingSystem.Api.Controllers
             return CreatedAtAction(nameof(PostAd), new { Id = newAd.Id }, newAd);
         }
 
-        // POST api/<AdvertiserController>/pay
-        [HttpPost("pay")]
-        public async Task<ActionResult<AdDTO>> PostAdMoney([FromBody] MoneyDTO money)
+        // POST api/<AdvertiserController>/5/pay
+        [HttpPost("{id}/pay")]
+        public async Task<ActionResult<AdDTO>> PostAdMoney(int id, [FromBody] int money)
         {
-            await _advertiserService.AddMoneyAsync(money);
+            await _advertiserService.AddMoneyAsync(id, money);
             return NoContent();
         }
     }

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AdvertisingSystem.Dal.Entities
 {
@@ -11,7 +6,7 @@ namespace AdvertisingSystem.Dal.Entities
     {
         public int Id { get; set; }
         public int Occurence { get; set; }
-        //TODO: maybe do this with enums (probably preferred) or with simple boolean
+        public int? TargetOccurence { get; set; }
         public string PaymentMethod { get; set; }
         //Name can't be only URL (and url for parameter), because it causes problems with EF Core
         public string AdURL { get; set; }
@@ -24,19 +19,19 @@ namespace AdvertisingSystem.Dal.Entities
         // therefore we can store the possible answers in a ; seperated list.
         //TODO: Check if this is the right way to check the nullable list
         [NotMapped]
-        public List<string>? PlaceGroups
+        public List<string> PlaceGroups
         {
             get
             {
                 if(SerializedPlaceGroups != null)
                     return SerializedPlaceGroups.Split(";").ToList();
 
-                return null;
+                return new List<string>();
             }
 
             set
             {
-                if (value != null)
+                if (value.Count != 0)
                     SerializedPlaceGroups = string.Join(";", value);
                 else SerializedPlaceGroups = null;
             }
@@ -44,17 +39,21 @@ namespace AdvertisingSystem.Dal.Entities
 
         //Foreign key
         public int AdvertiserId { get; set; }
+        // Only one ID is needed for one-to-one relationship
+        //public int AdBanId { get; set; }
 
         //Navigation properties
         public Advertiser Advertiser { get; set; } = null!;
+        // TODO: Consider multiple bans for one ad
+        public AdBan? AdBan { get; set; }
+        public ICollection<AdTransportline> AdTransportlines { get; } = new List<AdTransportline>();
         public ICollection<Transportline> Transportlines { get; } = new List<Transportline>();
-        //public IEnumerable<Receipt> Receipts { get; } = new List<Receipt>();
 
         public Ad(string paymentMethod, string adURL)
         {
             PaymentMethod = paymentMethod;
             AdURL = adURL;
-        }
 
+        }
     }
 }

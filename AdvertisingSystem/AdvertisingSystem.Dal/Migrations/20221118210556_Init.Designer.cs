@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AdvertisingSystem.Dal.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20221112125039_Seed")]
-    partial class Seed
+    [Migration("20221118210556_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,21 +23,6 @@ namespace AdvertisingSystem.Dal.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("AdTransportline", b =>
-                {
-                    b.Property<int>("AdsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TransportlinesId")
-                        .HasColumnType("int");
-
-                    b.HasKey("AdsId", "TransportlinesId");
-
-                    b.HasIndex("TransportlinesId");
-
-                    b.ToTable("AdTransportline");
-                });
 
             modelBuilder.Entity("AdvertisingSystem.Dal.Entities.Ad", b =>
                 {
@@ -71,11 +56,93 @@ namespace AdvertisingSystem.Dal.Migrations
                     b.Property<TimeSpan?>("StartTime")
                         .HasColumnType("time");
 
+                    b.Property<int?>("TargetOccurence")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AdvertiserId");
 
                     b.ToTable("Ads");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            AdURL = "test.com",
+                            AdvertiserId = 3,
+                            Occurence = 0,
+                            PaymentMethod = "Monthly",
+                            SerializedPlaceGroups = "Tram",
+                            TargetOccurence = 30
+                        },
+                        new
+                        {
+                            Id = 2,
+                            AdURL = "test2.com",
+                            AdvertiserId = 3,
+                            Occurence = 0,
+                            PaymentMethod = "Wallet",
+                            SerializedPlaceGroups = "Bus"
+                        });
+                });
+
+            modelBuilder.Entity("AdvertisingSystem.Dal.Entities.AdBan", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("AdId")
+                        .HasColumnType("int");
+
+                    b.Property<TimeSpan?>("EndTime")
+                        .HasColumnType("time");
+
+                    b.Property<string>("SerializedVehicleNames")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<TimeSpan?>("StartTime")
+                        .HasColumnType("time");
+
+                    b.Property<string>("SubstituteAdURL")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AdId")
+                        .IsUnique();
+
+                    b.ToTable("AdBans");
+                });
+
+            modelBuilder.Entity("AdvertisingSystem.Dal.Entities.AdTransportline", b =>
+                {
+                    b.Property<int>("AdId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TransportlineId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("AdBanId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AdId", "TransportlineId");
+
+                    b.HasIndex("AdBanId");
+
+                    b.HasIndex("TransportlineId");
+
+                    b.ToTable("AdTransportlines");
+
+                    b.HasData(
+                        new
+                        {
+                            AdId = 2,
+                            TransportlineId = 1
+                        });
                 });
 
             modelBuilder.Entity("AdvertisingSystem.Dal.Entities.ApplicationUser", b =>
@@ -197,7 +264,16 @@ namespace AdvertisingSystem.Dal.Migrations
 
                     b.HasIndex("TransportCompanyId");
 
-                    b.ToTable("Revenue");
+                    b.ToTable("Revenues");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Amount = 5000,
+                            Date = new DateTime(2000, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TransportCompanyId = 1
+                        });
                 });
 
             modelBuilder.Entity("AdvertisingSystem.Dal.Entities.Transportline", b =>
@@ -222,7 +298,7 @@ namespace AdvertisingSystem.Dal.Migrations
                     b.Property<TimeSpan>("StartTime")
                         .HasColumnType("time");
 
-                    b.Property<int>("TransportCompanyId")
+                    b.Property<int?>("TransportCompanyId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -230,6 +306,17 @@ namespace AdvertisingSystem.Dal.Migrations
                     b.HasIndex("TransportCompanyId");
 
                     b.ToTable("Transportlines");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            EndTime = new TimeSpan(0, 16, 27, 0, 0),
+                            Group = "Bus",
+                            Name = "5A",
+                            StartTime = new TimeSpan(0, 15, 42, 0, 0),
+                            TransportCompanyId = 1
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
@@ -370,6 +457,21 @@ namespace AdvertisingSystem.Dal.Migrations
                     b.HasBaseType("AdvertisingSystem.Dal.Entities.ApplicationUser");
 
                     b.HasDiscriminator().HasValue("AdOrganiser");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 2,
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "bfe4b498-2974-451a-ace3-92a4efe9f0c1",
+                            Email = "testAdOrg@test.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            PasswordHash = "AQAAAAEAACcQAAAAEF1dskg7PG8Y9rj4pEICJa+MYkmhrG690/I75aKqaquaNUjMoVo+IF3aLoDJyZF8MQ==",
+                            PhoneNumberConfirmed = false,
+                            TwoFactorEnabled = false,
+                            UserName = "t3"
+                        });
                 });
 
             modelBuilder.Entity("AdvertisingSystem.Dal.Entities.Advertiser", b =>
@@ -383,6 +485,23 @@ namespace AdvertisingSystem.Dal.Migrations
                         .HasColumnType("int");
 
                     b.HasDiscriminator().HasValue("Advertiser");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 3,
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "b317d509-519a-4ff9-896f-8262c19cd72a",
+                            Email = "testAdvertiser@test.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            PasswordHash = "AQAAAAEAACcQAAAAEFB/grqA/Y2QwuBcMof38gZO1yAm8NeUZCXEwD8r2yZIbBCjGekc7bFPieQY4zXaDg==",
+                            PhoneNumberConfirmed = true,
+                            TwoFactorEnabled = false,
+                            UserName = "t2",
+                            Enabled = true,
+                            Money = 100
+                        });
                 });
 
             modelBuilder.Entity("AdvertisingSystem.Dal.Entities.TransportCompany", b =>
@@ -396,30 +515,15 @@ namespace AdvertisingSystem.Dal.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "2d79e1e4-f9f4-4dfb-b9e8-fc31634681ad",
+                            ConcurrencyStamp = "30237430-d210-48a1-8885-9a72c2be56af",
                             Email = "test@test.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAEAACcQAAAAEMcjh/0hjQF68XNIOrf1a9kdl/PzLuSRucm/rv9SvB555ojWLqE5qgrEkLIchNIvHA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAELvEYcm6uOeq3/oSnGDuiyz7bEqORkcmskz9jkT05xSTridU8srQUKDmjJ36zJsgXQ==",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "t"
                         });
-                });
-
-            modelBuilder.Entity("AdTransportline", b =>
-                {
-                    b.HasOne("AdvertisingSystem.Dal.Entities.Ad", null)
-                        .WithMany()
-                        .HasForeignKey("AdsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("AdvertisingSystem.Dal.Entities.Transportline", null)
-                        .WithMany()
-                        .HasForeignKey("TransportlinesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("AdvertisingSystem.Dal.Entities.Ad", b =>
@@ -431,6 +535,42 @@ namespace AdvertisingSystem.Dal.Migrations
                         .IsRequired();
 
                     b.Navigation("Advertiser");
+                });
+
+            modelBuilder.Entity("AdvertisingSystem.Dal.Entities.AdBan", b =>
+                {
+                    b.HasOne("AdvertisingSystem.Dal.Entities.Ad", "Ad")
+                        .WithOne("AdBan")
+                        .HasForeignKey("AdvertisingSystem.Dal.Entities.AdBan", "AdId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ad");
+                });
+
+            modelBuilder.Entity("AdvertisingSystem.Dal.Entities.AdTransportline", b =>
+                {
+                    b.HasOne("AdvertisingSystem.Dal.Entities.AdBan", "AdBan")
+                        .WithMany("AdTransportlines")
+                        .HasForeignKey("AdBanId");
+
+                    b.HasOne("AdvertisingSystem.Dal.Entities.Ad", "Ad")
+                        .WithMany("AdTransportlines")
+                        .HasForeignKey("AdId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("AdvertisingSystem.Dal.Entities.Transportline", "Transportline")
+                        .WithMany("AdTrnasportlines")
+                        .HasForeignKey("TransportlineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Ad");
+
+                    b.Navigation("AdBan");
+
+                    b.Navigation("Transportline");
                 });
 
             modelBuilder.Entity("AdvertisingSystem.Dal.Entities.Receipt", b =>
@@ -459,9 +599,7 @@ namespace AdvertisingSystem.Dal.Migrations
                 {
                     b.HasOne("AdvertisingSystem.Dal.Entities.TransportCompany", "TransportCompany")
                         .WithMany("Transportlines")
-                        .HasForeignKey("TransportCompanyId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("TransportCompanyId");
 
                     b.Navigation("TransportCompany");
                 });
@@ -515,6 +653,23 @@ namespace AdvertisingSystem.Dal.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("AdvertisingSystem.Dal.Entities.Ad", b =>
+                {
+                    b.Navigation("AdBan");
+
+                    b.Navigation("AdTransportlines");
+                });
+
+            modelBuilder.Entity("AdvertisingSystem.Dal.Entities.AdBan", b =>
+                {
+                    b.Navigation("AdTransportlines");
+                });
+
+            modelBuilder.Entity("AdvertisingSystem.Dal.Entities.Transportline", b =>
+                {
+                    b.Navigation("AdTrnasportlines");
                 });
 
             modelBuilder.Entity("AdvertisingSystem.Dal.Entities.Advertiser", b =>
