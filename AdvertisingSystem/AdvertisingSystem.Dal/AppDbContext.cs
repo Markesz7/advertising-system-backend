@@ -77,6 +77,8 @@ namespace AdvertisingSystem.Dal
 
         private void SeedData(ModelBuilder builder)
         {
+            SeedRoles(builder);
+
             PasswordHasher<ApplicationUser> ph = new PasswordHasher<ApplicationUser>();
 
             // Seed test user data
@@ -156,6 +158,54 @@ namespace AdvertisingSystem.Dal
                 AdId = 2,
                 TransportlineId = 1
             });
+
+            SeedUsersToRoles(builder);
+        }
+
+        private void SeedUsersToRoles(ModelBuilder builder)
+        {
+            builder.Entity<IdentityUserRole<int>>().HasData(new IdentityUserRole<int>
+            {
+                RoleId = 1,
+                UserId = 1
+            });
+
+            builder.Entity<IdentityUserRole<int>>().HasData(new IdentityUserRole<int>
+            {
+                RoleId = 2,
+                UserId = 2
+            });
+
+            builder.Entity<IdentityUserRole<int>>().HasData(new IdentityUserRole<int>
+            {
+                RoleId = 3,
+                UserId = 3
+            });
+        }
+
+        private void SeedRoles(ModelBuilder builder)
+        {
+            builder.Entity<IdentityRole<int>>().HasData(new IdentityRole<int>
+            {
+                Id = 1,
+                Name = "transportcompany",
+                NormalizedName = "TRANSPORTCOMPANY"
+            });
+
+            builder.Entity<IdentityRole<int>>().HasData(new IdentityRole<int>
+            {
+                Id = 2,
+                Name = "adorganizer",
+                NormalizedName = "ADORGANIZER"
+            });
+
+            builder.Entity<IdentityRole<int>>().HasData(new IdentityRole<int>
+            {
+                Id = 3,
+                Name = "advertiser",
+                NormalizedName = "ADVERTISER"
+            });
+
         }
     }
 }
