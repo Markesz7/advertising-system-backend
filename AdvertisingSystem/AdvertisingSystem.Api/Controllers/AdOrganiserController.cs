@@ -1,6 +1,10 @@
 ﻿using AdvertisingSystem.Bll.Dtos;
 using AdvertisingSystem.Bll.Interfaces;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -8,6 +12,8 @@ namespace AdvertisingSystem.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
+    [Authorize(Policy = "RequiredAdOrganiserRole")]
     public class AdOrganiser : ControllerBase
     {
         private readonly IAdOrganiserService _adOrganiserService;
@@ -15,6 +21,38 @@ namespace AdvertisingSystem.Api.Controllers
         public AdOrganiser(IAdOrganiserService adOrganiserService)
         {
             _adOrganiserService = adOrganiserService;
+        }
+
+        // POST api/<AdOrganiser>/login
+        [HttpPost("login")]
+        [AllowAnonymous]
+        public async Task<ActionResult<ApplicationUserDTO>> LoginTransportCompany([FromBody] LoginDTO transportCompany)
+        {
+            var user = await _adOrganiserService.LoginAdOrganiserAsync(transportCompany);
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Name, user.UserName),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Role, "adorganiser")
+            };
+
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(claimsIdentity));
+
+            return user;
+        }
+
+        // POST api/<AdOrganiser>/logout
+        [HttpPost("logout")]
+        public async Task<ActionResult> LogoutTransportCompany()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return Ok();
         }
 
         // GET: api/<AdOrganiser>

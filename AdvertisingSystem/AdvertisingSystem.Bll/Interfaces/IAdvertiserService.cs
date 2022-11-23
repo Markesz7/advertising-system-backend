@@ -11,5 +11,6 @@ namespace AdvertisingSystem.Bll.Interfaces
         public Task<IEnumerable<AdDTO>> GetAdsByUserAsync(int advertiserId);
         public Task<AdvertiserDTO> GetAdvertiserAsync(int advertiserId);
         public Task<AdvertiserDTO> InsertAdvertiserAsync(AdvertiserRegisterDTO advertiser);
+        public Task<ApplicationUserDTO> LoginAdvertiserAsync(LoginDTO userCred);
     }
 }
