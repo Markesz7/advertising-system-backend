@@ -1,5 +1,4 @@
-﻿using AdvertisingSystem.Dal.Entities;
-using AdvertisingSystem.Dal.Helper;
+﻿using AdvertisingSystem.Dal.Helper;
 using System.Text.Json.Serialization;
 
 namespace AdvertisingSystem.Bll.Dtos
@@ -9,6 +8,7 @@ namespace AdvertisingSystem.Bll.Dtos
     public record LoginDTO(string UserName, string Password);
     public record RevenueDTO(int Id, DateTime Date, int Amount);
     public record ReceiptDTO(int Id, DateTime Date, int Price);
+    public record VehicleDTO(string Secret, IEnumerable<VehicleAdDTO> Ads);
     public record VehicleAdDTO(int Id, int Occurence, string AdURL);
     public record ToggleAdvertiserDTO(int Id, bool Enabled);
     public record MoneyDTO(int Id, int Amount);
