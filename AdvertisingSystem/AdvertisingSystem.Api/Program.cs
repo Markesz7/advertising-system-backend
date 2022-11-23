@@ -61,6 +61,7 @@ builder.Services.AddAuthorization(options =>
     {
         options.AddPolicy("RequiredAdvertiserRole", policy => policy.RequireRole("advertiser"));
         options.AddPolicy("RequiredTransportCompanyRole", policy => policy.RequireRole("transportcompany"));
+        options.AddPolicy("RequiredAdOrganiserRole", policy => policy.RequireRole("adorganiser"));
         options.AddPolicy("RequiredSameID", policy =>
         {
             policy.Requirements.Add(new UserIsResourceOwnerRequirement());
