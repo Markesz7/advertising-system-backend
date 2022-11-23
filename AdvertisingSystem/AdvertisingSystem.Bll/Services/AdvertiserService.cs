@@ -109,7 +109,7 @@ namespace AdvertisingSystem.Bll.Services
             return await GetAdvertiserAsync(efAdvertiser.Id);
         }
 
-        public async Task<AdvertiserDTO> LoginAdvertiserAsync(LoginDTO userCred)
+        public async Task<ApplicationUserDTO> LoginAdvertiserAsync(LoginDTO userCred)
         {
             var user = await _userManager.FindByNameAsync(userCred.UserName);
             if (user == null)
@@ -117,9 +117,9 @@ namespace AdvertisingSystem.Bll.Services
 
             var result = _userManager.PasswordHasher.VerifyHashedPassword(user, user.PasswordHash, userCred.Password);
             if (result == PasswordVerificationResult.Failed)
-                throw new NotImplementedException("Login failed: Password not correct!");
+                throw new NotImplementedException("Login failed: Password is not correct!");
 
-            return _mapper.Map<AdvertiserDTO>(user);
+            return _mapper.Map<ApplicationUserDTO>(user);
         }
     }
 }

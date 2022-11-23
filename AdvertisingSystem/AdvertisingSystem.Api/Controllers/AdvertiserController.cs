@@ -19,8 +19,6 @@ namespace AdvertisingSystem.Api.Controllers
     public class AdvertiserController : ControllerBase
     {
         private readonly IAdvertiserService _advertiserService;
-        //private readonly SignInManager<Advertiser> _signInManager;
-        //private readonly UserManager<Advertiser> _userManager;
 
         public AdvertiserController(IAdvertiserService advertiserService)
         {
@@ -38,7 +36,7 @@ namespace AdvertisingSystem.Api.Controllers
         // POST api/<AdvertiserController>/login
         [HttpPost("login")]
         [AllowAnonymous]
-        public async Task<ActionResult> RegisterAdvertiser([FromBody] LoginDTO advertiser)
+        public async Task<ActionResult<ApplicationUserDTO>> LoginAdvertiser([FromBody] LoginDTO advertiser)
         {
             var user = await _advertiserService.LoginAdvertiserAsync(advertiser);
 
@@ -56,7 +54,7 @@ namespace AdvertisingSystem.Api.Controllers
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 new ClaimsPrincipal(claimsIdentity));
 
-            return Ok();
+            return user;
         }
 
         // POST api/<AdvertiserController>/logout
@@ -72,13 +70,6 @@ namespace AdvertisingSystem.Api.Controllers
         [Authorize(Policy = "RequiredSameID")]
         public async Task<ActionResult<AdvertiserDTO>> GetAdvertiser(int id)
         {
-            /*
-            var identity = (ClaimsIdentity)User.Identity;
-            var identityId = int.Parse(identity.FindFirst(ClaimTypes.NameIdentifier).Value);
-            if (identityId != id)
-                return StatusCode(403);
-            */
-
             var advertiser = await _advertiserService.GetAdvertiserAsync(id);
             return advertiser;
         }

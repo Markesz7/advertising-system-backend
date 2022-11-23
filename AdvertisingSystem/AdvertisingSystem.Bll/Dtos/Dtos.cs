@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace AdvertisingSystem.Bll.Dtos
 {
+    public record ApplicationUserDTO(string UserName, string Email, int Id);
     public record AdvertiserRegisterDTO(string UserName, string Password, string Email);
     public record LoginDTO(string UserName, string Password);
     public record RevenueDTO(int Id, DateTime Date, int Amount);
