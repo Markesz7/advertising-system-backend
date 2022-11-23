@@ -8,6 +8,5 @@ namespace AdvertisingSystem.Bll.Interfaces
         public Task<IEnumerable<AdvertiserDTO>> GetAdvertisersAsync();
         public Task ToggleUserAsync(ToggleAdvertiserDTO advertiser);
         public Task DoBookingAsync();
-        public Task<ApplicationUserDTO> LoginAdOrganiserAsync(LoginDTO userCred);
     }
 }

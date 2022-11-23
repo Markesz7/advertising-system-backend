@@ -5,7 +5,6 @@ using AdvertisingSystem.Dal.Entities;
 using AdvertisingSystem.Dal.Helper;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace AdvertisingSystem.Bll.Services
@@ -15,13 +14,10 @@ namespace AdvertisingSystem.Bll.Services
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
 
-        private readonly UserManager<TransportCompany> _userManager;
-
-        public TransportCompanyService(AppDbContext appDbContext, IMapper mapper, UserManager<TransportCompany> userManager)
+        public TransportCompanyService(AppDbContext appDbContext, IMapper mapper)
         {
             _context = appDbContext;
             _mapper = mapper;
-            _userManager = userManager;
         }
 
         public async Task<AdBanDTO> BanAdAsync(AdBanDTO adban)
@@ -117,19 +113,6 @@ namespace AdvertisingSystem.Bll.Services
                 .ToListAsync();
 
             return transportlines;
-        }
-
-        public async Task<ApplicationUserDTO> LoginTransportCompanyAsync(LoginDTO userCred)
-        {
-            var user = await _userManager.FindByNameAsync(userCred.UserName);
-            if (user == null)
-                throw new NotImplementedException("Login failed: Can't find user!");
-
-            var result = _userManager.PasswordHasher.VerifyHashedPassword(user, user.PasswordHash, userCred.Password);
-            if (result == PasswordVerificationResult.Failed)
-                throw new NotImplementedException("Login failed: Password is not correct!");
-
-            return _mapper.Map<ApplicationUserDTO>(user);
         }
     }
 }

@@ -4,7 +4,6 @@ using AdvertisingSystem.Dal;
 using AdvertisingSystem.Dal.Entities;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace AdvertisingSystem.Bll.Services
@@ -14,13 +13,10 @@ namespace AdvertisingSystem.Bll.Services
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
 
-        private readonly UserManager<TransportCompany> _userManager;
-
-        public AdOrganiserService(IMapper mapper, AppDbContext context, UserManager<TransportCompany> userManager)
+        public AdOrganiserService(IMapper mapper, AppDbContext context)
         {
             _mapper = mapper;
             _context = context;
-            _userManager = userManager;
         }
 
         public async Task DeleteAdAsync(int adID)
@@ -101,19 +97,6 @@ namespace AdvertisingSystem.Bll.Services
             return await _context.Advertisers
                 .ProjectTo<AdvertiserDTO>(_mapper.ConfigurationProvider)
                 .ToListAsync();
-        }
-
-        public async Task<ApplicationUserDTO> LoginAdOrganiserAsync(LoginDTO userCred)
-        {
-            var user = await _userManager.FindByNameAsync(userCred.UserName);
-            if (user == null)
-                throw new NotImplementedException("Login failed: Can't find user!");
-
-            var result = _userManager.PasswordHasher.VerifyHashedPassword(user, user.PasswordHash, userCred.Password);
-            if (result == PasswordVerificationResult.Failed)
-                throw new NotImplementedException("Login failed: Password is not correct!");
-
-            return _mapper.Map<ApplicationUserDTO>(user);
         }
     }
 }

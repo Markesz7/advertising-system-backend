@@ -6,7 +6,6 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 
 namespace AdvertisingSystem.Bll.Services
 {
@@ -15,13 +14,10 @@ namespace AdvertisingSystem.Bll.Services
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
 
-        private readonly UserManager<Advertiser> _userManager;
-
-        public AdvertiserService(AppDbContext context, IMapper mapper, UserManager<Advertiser> userManager)
+        public AdvertiserService(AppDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
-            _userManager = userManager;
         }
 
         public async Task<IEnumerable<ReceiptDTO>> GetReceiptsByUser(int userId)
@@ -91,6 +87,8 @@ namespace AdvertisingSystem.Bll.Services
 
         public async Task<AdvertiserDTO> InsertAdvertiserAsync(AdvertiserRegisterDTO advertiser)
         {
+            // TODO: Change this when security is added
+            PasswordHasher<ApplicationUser> ph = new PasswordHasher<ApplicationUser>();
             var efAdvertiser = new Advertiser
             {
                 UserName = advertiser.UserName,
@@ -98,28 +96,11 @@ namespace AdvertisingSystem.Bll.Services
                 Money = 0,
                 Enabled = true
             };
-            var result = await _userManager.CreateAsync(efAdvertiser, advertiser.Password);
-            if(!result.Succeeded)
-            {
-                throw new NotImplementedException(result.Errors.First().Description);
-            }
+            efAdvertiser.PasswordHash = ph.HashPassword(efAdvertiser, advertiser.Password);
 
-            await _userManager.AddToRoleAsync(efAdvertiser, "advertiser");
-
+            _context.Advertisers.Add(efAdvertiser);
+            await _context.SaveChangesAsync();
             return await GetAdvertiserAsync(efAdvertiser.Id);
-        }
-
-        public async Task<ApplicationUserDTO> LoginAdvertiserAsync(LoginDTO userCred)
-        {
-            var user = await _userManager.FindByNameAsync(userCred.UserName);
-            if (user == null)
-                throw new NotImplementedException("Login failed: Can't find user!");
-
-            var result = _userManager.PasswordHasher.VerifyHashedPassword(user, user.PasswordHash, userCred.Password);
-            if (result == PasswordVerificationResult.Failed)
-                throw new NotImplementedException("Login failed: Password is not correct!");
-
-            return _mapper.Map<ApplicationUserDTO>(user);
         }
     }
 }

@@ -345,29 +345,6 @@ namespace AdvertisingSystem.Dal.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            ConcurrencyStamp = "92cfff66-5057-40c8-ab2b-f55141ebd26e",
-                            Name = "transportcompany",
-                            NormalizedName = "TRANSPORTCOMPANY"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            ConcurrencyStamp = "a430251e-bf92-40ab-ae44-3c4fd2ee2215",
-                            Name = "adorganizer",
-                            NormalizedName = "ADORGANIZER"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            ConcurrencyStamp = "ec568bd3-f902-4c53-8664-e7365a99fdc8",
-                            Name = "advertiser",
-                            NormalizedName = "ADVERTISER"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -452,23 +429,6 @@ namespace AdvertisingSystem.Dal.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = 1,
-                            RoleId = 1
-                        },
-                        new
-                        {
-                            UserId = 2,
-                            RoleId = 2
-                        },
-                        new
-                        {
-                            UserId = 3,
-                            RoleId = 3
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
@@ -501,11 +461,11 @@ namespace AdvertisingSystem.Dal.Migrations
                         {
                             Id = 2,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "51d28da5-8ffc-4561-83f0-10ff476a3a55",
+                            ConcurrencyStamp = "bfe4b498-2974-451a-ace3-92a4efe9f0c1",
                             Email = "testAdOrg@test.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAEAACcQAAAAEFP6NQk67a2yc4FQc/UGeEisxEF8a18rtxnGmdM6gUIAfOdR/Hsl6+U9buJVF7VARw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEF1dskg7PG8Y9rj4pEICJa+MYkmhrG690/I75aKqaquaNUjMoVo+IF3aLoDJyZF8MQ==",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "t3"
@@ -529,11 +489,11 @@ namespace AdvertisingSystem.Dal.Migrations
                         {
                             Id = 3,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "7740174e-bce6-4c88-b23e-c6e72968978e",
+                            ConcurrencyStamp = "b317d509-519a-4ff9-896f-8262c19cd72a",
                             Email = "testAdvertiser@test.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAEAACcQAAAAEJZ8Q/9Ma53GxbCImGPZRhJN2KfYSlHpjHwquh75hDQ102WZs5TYaCb4XLsauFuQXg==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEFB/grqA/Y2QwuBcMof38gZO1yAm8NeUZCXEwD8r2yZIbBCjGekc7bFPieQY4zXaDg==",
                             PhoneNumberConfirmed = true,
                             TwoFactorEnabled = false,
                             UserName = "t2",
@@ -553,11 +513,11 @@ namespace AdvertisingSystem.Dal.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "1c126a0a-891f-45b0-8eb4-a3f2e03ac63a",
+                            ConcurrencyStamp = "30237430-d210-48a1-8885-9a72c2be56af",
                             Email = "test@test.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
-                            PasswordHash = "AQAAAAEAACcQAAAAELZtBbCcXNYwivnSuifGgDRCEjR3KbVOYZr4BjkIrnObWWpFM16hD+BQAiDu9/+cUg==",
+                            PasswordHash = "AQAAAAEAACcQAAAAELvEYcm6uOeq3/oSnGDuiyz7bEqORkcmskz9jkT05xSTridU8srQUKDmjJ36zJsgXQ==",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "t"
