@@ -6,6 +6,8 @@
 # AppsettingsDevelopment
 appsettings.Development.json
 
+# Docker-compse env file
+.my-env
 
 # User-specific files
 *.rsuser
