@@ -119,6 +119,13 @@ namespace AdvertisingSystem.Bll.Services
             return transportlines;
         }
 
+        public async Task<IEnumerable<AdDTO>> GetAdsAsync()
+        {
+            return await _context.Ads
+                .ProjectTo<AdDTO>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+        }
+
         public async Task<ApplicationUserDTO> LoginTransportCompanyAsync(LoginDTO userCred)
         {
             var user = await _userManager.FindByNameAsync(userCred.UserName);

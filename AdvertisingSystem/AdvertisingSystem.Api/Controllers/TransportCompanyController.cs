@@ -79,6 +79,13 @@ namespace AdvertisingSystem.Api.Controllers
             return CreatedAtAction(nameof(InsertTransportline), new { id = newTransportline.Id }, newTransportline);
         }
 
+        // GET api/<TransportCompanyController>/ads
+        [HttpGet("ads")]
+        public async Task<ActionResult<IEnumerable<AdDTO>>> GetAds()
+        {
+            return (await _transportCompanyService.GetAdsAsync()).ToList();
+        }
+
         // POST api/<TransportCompanyController>/addadban
         [HttpPost("addadban")]
         public async Task<ActionResult<AdBanDTO>> BanAd([FromBody] AdBanDTO adban)

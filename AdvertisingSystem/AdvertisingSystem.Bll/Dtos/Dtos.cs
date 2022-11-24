@@ -47,7 +47,7 @@ namespace AdvertisingSystem.Bll.Dtos
         public TimeOnly? EndTime { get; init; }
         public List<string> PlaceGroups { get; init; } = null!;
         public int AdvertiserId { get; init; }
-        //public Advertiser Advertiser { get; init; } = null!;
+        public AdBanDTO? AdBan { get; init; }
     }
 
     public record TransportlineDTO
