@@ -37,6 +37,7 @@ builder.Services.AddTransient<IVehicleService, VehicleService>();
 builder.Services.AddTransient<IAdOrganiserService, AdOrganiserService>();
 builder.Services.AddTransient<IAdvertiserService, AdvertiserService>();
 
+builder.Services.AddSingleton<IFileService, FileService>();
 builder.Services.AddSingleton<IAuthorizationHandler, UserIsResourceOwnerHandler>();
 
 // ASP.net automatically redirects to a login page when 401 or 403 statusCode is the answer.
@@ -98,6 +99,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+var fileService = app.Services.GetService<IFileService>();
+fileService.CurrentRootDirectory = app.Environment.ContentRootPath;
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -2,11 +2,12 @@
 using AdvertisingSystem.Bll.Interfaces;
 using AdvertisingSystem.Dal;
 using AdvertisingSystem.Dal.Entities;
+using AdvertisingSystem.Dal.Helper;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 
 namespace AdvertisingSystem.Bll.Services
 {
@@ -32,12 +33,21 @@ namespace AdvertisingSystem.Bll.Services
                 .ToListAsync();
         }
 
-        public async Task<AdDTO> InsertAdAsync(AdDTO ad)
+        public async Task<AdResponseDTO> InsertAdAsync(AdRequestDTO ad, int advertiserId, string imagePath)
         {
+            // TODO: This is kind of a bad solution for this
+            ad.ImagePath = imagePath;
+            ad.AdURL = $"api/advertiser/{advertiserId}/image/{imagePath.Split("\\").Last()}";
+            ad.AdvertiserId = advertiserId;
+
             var efAd = _mapper.Map<Ad>(ad);
             efAd.Occurence = 0;
             if (efAd.PaymentMethod == "Wallet")
                 efAd.TargetOccurence = null;
+
+            //efAd.ImagePath = imagePath;
+            //efAd.AdURL = $"api/advertiser/{efAd.AdvertiserId}/image/{imagePath.Split("/").Last()}";
+
             _context.Ads.Add(efAd);
 
             var tls = await _context.Transportlines
@@ -63,18 +73,18 @@ namespace AdvertisingSystem.Bll.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<AdDTO>> GetAdsByUserAsync(int advertiserId)
+        public async Task<IEnumerable<AdResponseDTO>> GetAdsByUserAsync(int advertiserId)
         {
             return await _context.Ads
                 .Where(ad => ad.AdvertiserId == advertiserId)
-                .ProjectTo<AdDTO>(_mapper.ConfigurationProvider)
+                .ProjectTo<AdResponseDTO>(_mapper.ConfigurationProvider)
                 .ToListAsync();
         }
 
-        public async Task<AdDTO> GetAdAsync(int adId)
+        public async Task<AdResponseDTO> GetAdAsync(int adId)
         {
             var ad = await _context.Ads
-                .ProjectTo<AdDTO>(_mapper.ConfigurationProvider)
+                .ProjectTo<AdResponseDTO>(_mapper.ConfigurationProvider)
                 .SingleOrDefaultAsync(t => t.Id == adId);
             // TODO : Check for null with exception
             return ad;

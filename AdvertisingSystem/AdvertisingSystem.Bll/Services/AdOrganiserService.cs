@@ -13,19 +13,21 @@ namespace AdvertisingSystem.Bll.Services
     {
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IFileService _fileService;
 
         private readonly UserManager<TransportCompany> _userManager;
 
-        public AdOrganiserService(IMapper mapper, AppDbContext context, UserManager<TransportCompany> userManager)
+        public AdOrganiserService(IMapper mapper, AppDbContext context, UserManager<TransportCompany> userManager, IFileService fileService)
         {
             _mapper = mapper;
             _context = context;
             _userManager = userManager;
+            _fileService = fileService;
         }
 
         public async Task DeleteAdAsync(int adID)
         {
-            _context.Ads.Remove(new Ad(null!, null!) { Id = adID });
+            _context.Ads.Remove(new Ad(null!, null!, null!) { Id = adID });
             await _context.SaveChangesAsync();
         }
 
@@ -67,6 +69,7 @@ namespace AdvertisingSystem.Bll.Services
                     }
 
                     _context.Ads.Remove(ad);
+                    _fileService.DeleteAdImage(ad.AdvertiserId, ad.ImagePath.Split("/").Last());
                 }
             }
 

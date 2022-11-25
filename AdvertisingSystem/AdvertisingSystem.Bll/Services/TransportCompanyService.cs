@@ -119,10 +119,10 @@ namespace AdvertisingSystem.Bll.Services
             return transportlines;
         }
 
-        public async Task<IEnumerable<AdDTO>> GetAdsAsync()
+        public async Task<IEnumerable<AdResponseDTO>> GetAdsAsync()
         {
             return await _context.Ads
-                .ProjectTo<AdDTO>(_mapper.ConfigurationProvider)
+                .ProjectTo<AdResponseDTO>(_mapper.ConfigurationProvider)
                 .ToListAsync();
         }
 

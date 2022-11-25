@@ -8,7 +8,8 @@ namespace AdvertisingSystem.Bll.Dtos
         public WebApiProfile()
         {
             // This creates a two way map.
-            CreateMap<Ad, AdDTO>().ReverseMap();
+            CreateMap<Ad, AdResponseDTO>();
+            CreateMap<AdRequestDTO, Ad>();
             CreateMap<Transportline, TransportlineDTO>().ReverseMap();
             CreateMap<Advertiser, AdvertiserDTO>().ReverseMap();
             CreateMap<Advertiser, ApplicationUserDTO>();

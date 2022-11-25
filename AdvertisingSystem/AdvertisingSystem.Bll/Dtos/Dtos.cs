@@ -1,4 +1,5 @@
 ﻿using AdvertisingSystem.Dal.Helper;
+using Microsoft.AspNetCore.Http;
 using System.Text.Json.Serialization;
 
 namespace AdvertisingSystem.Bll.Dtos
@@ -21,6 +22,7 @@ namespace AdvertisingSystem.Bll.Dtos
         public TimeOnly? EndTime { get; init; }
         public List<string> VehicleNames { get; init; } = null!;
         public int AdId { get; set; }
+        //public IFormFile? SubstituteAdImage { get; init; }
     }
 
     public record AdvertiserDTO
@@ -30,15 +32,30 @@ namespace AdvertisingSystem.Bll.Dtos
         public string Email { get; init; } = null!;
         public int Money { get; init; }
         public bool Enabled { get; init; }
-        public List<AdDTO> Ads { get; init; } = null!;
+        public List<AdResponseDTO> Ads { get; init; } = null!;
         public List<ReceiptDTO> Receipts { get; init; } = null!;
     }
 
-    public record AdDTO
+    public record AdRequestDTO
     {
-        public int? Id { get; init; }
-        public int? Occurence { get; init; }
         public int? TargetOccurence { get; init; }
+        public string PaymentMethod { get; init; } = null!;
+        [JsonConverter(typeof(TimeOnlyJSONConverter))]
+        public TimeOnly? StartTime { get; init; }
+        [JsonConverter(typeof(TimeOnlyJSONConverter))]
+        public TimeOnly? EndTime { get; init; }
+        public List<string> PlaceGroups { get; init; } = null!;
+        public string? AdURL { get; set; }
+        public string? ImagePath { get; set; }
+        public int AdvertiserId { get; set; }
+        public IFormFile AdImage { get; init; } = null!;
+    }
+
+    public record AdResponseDTO
+    {
+        public int Id { get; init; }
+        public int Occurence { get; init; }
+        public int TargetOccurence { get; init; }
         public string PaymentMethod { get; init; } = null!;
         public string AdURL { get; init; } = null!;
         [JsonConverter(typeof(TimeOnlyJSONConverter))]
@@ -60,6 +77,5 @@ namespace AdvertisingSystem.Bll.Dtos
         public TimeOnly EndTime { get; init; }
         public string Group { get; init; } = null!;
         public int TransportCompanyId { get; init; }
-        //public TransportCompany? TransportCompany { get; init; } = null!;
     }
 }

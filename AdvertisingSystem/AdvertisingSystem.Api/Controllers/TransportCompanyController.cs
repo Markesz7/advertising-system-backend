@@ -81,7 +81,7 @@ namespace AdvertisingSystem.Api.Controllers
 
         // GET api/<TransportCompanyController>/ads
         [HttpGet("ads")]
-        public async Task<ActionResult<IEnumerable<AdDTO>>> GetAds()
+        public async Task<ActionResult<IEnumerable<AdResponseDTO>>> GetAds()
         {
             return (await _transportCompanyService.GetAdsAsync()).ToList();
         }
