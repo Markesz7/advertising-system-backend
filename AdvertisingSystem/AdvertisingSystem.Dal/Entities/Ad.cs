@@ -8,8 +8,8 @@ namespace AdvertisingSystem.Dal.Entities
         public int Occurence { get; set; }
         public int? TargetOccurence { get; set; }
         public string PaymentMethod { get; set; }
-        //Name can't be only URL (and url for parameter), because it causes problems with EF Core
         public string AdURL { get; set; }
+        public string ImagePath { get; set; }
         public TimeOnly? StartTime { get; set; }
         public TimeOnly? EndTime { get; set; }
         [Column("PlaceGroups")]
@@ -49,11 +49,11 @@ namespace AdvertisingSystem.Dal.Entities
         public ICollection<AdTransportline> AdTransportlines { get; } = new List<AdTransportline>();
         public ICollection<Transportline> Transportlines { get; } = new List<Transportline>();
 
-        public Ad(string paymentMethod, string adURL)
+        public Ad(string paymentMethod, string adURL, string imagePath)
         {
-            PaymentMethod = paymentMethod;
             AdURL = adURL;
-
+            PaymentMethod = paymentMethod;
+            ImagePath = imagePath;
         }
     }
 }

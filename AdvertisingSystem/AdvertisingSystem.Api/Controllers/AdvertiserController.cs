@@ -19,10 +19,12 @@ namespace AdvertisingSystem.Api.Controllers
     public class AdvertiserController : ControllerBase
     {
         private readonly IAdvertiserService _advertiserService;
+        private readonly IFileService _fileService;
 
-        public AdvertiserController(IAdvertiserService advertiserService)
+        public AdvertiserController(IAdvertiserService advertiserService, IFileService fileService)
         {
             _advertiserService = advertiserService;
+            _fileService = fileService;
         }
 
         // POST api/<AdvertiserController>/register
@@ -77,7 +79,7 @@ namespace AdvertisingSystem.Api.Controllers
         // GET api/<AdvertiserController>/5/ads
         [HttpGet("{id}/ads")]
         [Authorize(Policy = "RequiredSameID")]
-        public async Task<ActionResult<IEnumerable<AdDTO>>> GetAdsByUser(int id)
+        public async Task<ActionResult<IEnumerable<AdResponseDTO>>> GetAdsByUser(int id)
         {
             var ads = await _advertiserService.GetAdsByUserAsync(id);
             return ads.ToList();
@@ -92,18 +94,29 @@ namespace AdvertisingSystem.Api.Controllers
             return receipts.ToList();
         }
 
-        // POST api/<AdvertiserController>/createad
-        [HttpPost("createad")]
-        public async Task<ActionResult<AdDTO>> PostAd([FromBody] AdDTO ad)
+        // GET api/<AdvertiserController>/5/image/46d359f1
+        [HttpGet("{advertiserid}/image/{adPictureId}")]
+        [Authorize(Policy = "RequiredSameID")]
+        public ActionResult GetImage(int advertiserid, string adPictureId)
         {
-            var newAd = await _advertiserService.InsertAdAsync(ad);
+            var image = _fileService.LoadAdImage(advertiserid, adPictureId);
+            return File(image, "image/jpeg");
+        }
+
+        // POST api/<AdvertiserController>/5/createad
+        [HttpPost("{id}/createad")]
+        [RequestSizeLimit(15 * 1024 * 1024)]
+        public async Task<ActionResult<AdResponseDTO>> PostAd(int id, [FromForm] AdRequestDTO ad)
+        {
+            var adPath = await _fileService.SaveAdImageAsync(ad.AdImage, id);
+            var newAd = await _advertiserService.InsertAdAsync(ad, id, adPath);
             return CreatedAtAction(nameof(PostAd), new { Id = newAd.Id }, newAd);
         }
 
         // POST api/<AdvertiserController>/5/pay
         [HttpPost("{id}/pay")]
         [Authorize(Policy = "RequiredSameID")]
-        public async Task<ActionResult<AdDTO>> PostAdMoney(int id, [FromBody] int money)
+        public async Task<ActionResult> PostAdMoney(int id, [FromBody] int money)
         {
             await _advertiserService.AddMoneyAsync(id, money);
             return NoContent();

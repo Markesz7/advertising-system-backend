@@ -1,4 +1,5 @@
 ﻿using AdvertisingSystem.Bll.Dtos;
+using AdvertisingSystem.Bll.Exceptions;
 using AdvertisingSystem.Bll.Interfaces;
 using AdvertisingSystem.Dal;
 using AdvertisingSystem.Dal.Entities;
@@ -14,18 +15,23 @@ namespace AdvertisingSystem.Bll.Services
     {
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IFileService _fileService;
 
         private readonly UserManager<TransportCompany> _userManager;
 
-        public TransportCompanyService(AppDbContext appDbContext, IMapper mapper, UserManager<TransportCompany> userManager)
+        public TransportCompanyService(AppDbContext appDbContext, IMapper mapper, UserManager<TransportCompany> userManager, IFileService fileService)
         {
             _context = appDbContext;
             _mapper = mapper;
             _userManager = userManager;
+            _fileService = fileService;
         }
 
-        public async Task<AdBanDTO> BanAdAsync(AdBanDTO adban)
+        public async Task<AdBanDTO> BanAdAsync(AdBanDTO adban, string imagePath)
         {
+            if(imagePath != "")
+                adban.SubstituteAdURL = $"api/advertiser/{adban.AdvertiserId}/image/{imagePath.Split("\\").Last()}";
+
             var efAdban = _mapper.Map<AdBan>(adban);
             await GetTransportlinesByNamesAndTimerangeAsync(efAdban);
 
@@ -36,32 +42,48 @@ namespace AdvertisingSystem.Bll.Services
 
         public async Task<AdBanDTO> GetAdBanAsync(int adbanId)
         {
-            // TODO: Check for null reference
             return await _context.AdBans
                 .ProjectTo<AdBanDTO>(_mapper.ConfigurationProvider)
-                .SingleOrDefaultAsync(adban => adban.Id == adbanId);
+                .SingleOrDefaultAsync(adban => adban.Id == adbanId)
+                ?? throw new EntityNotFoundException("Can't find the selected adban!");
         }
 
         public async Task EnableAdAsync(int adbanId)
         {
+            // TODO: We can skip this, if the picture id and adban id is the same or the image structure is different
+            var efAdban = await _context.AdBans
+                .Include(adban => adban.Ad)
+                .SingleOrDefaultAsync(adban => adban.Id == adbanId)
+                ?? throw new EntityNotFoundException("Can't find the selected adban!");
+
+            // TODO: Maybe merge this query with the adban query
             var adtls = await _context.AdTransportlines
                 .Where(adtl => adtl.AdBanId == adbanId).ToListAsync();
 
-            foreach(var adtl in adtls)
+            foreach (var adtl in adtls)
             {
                 adtl.AdBanId = null;
             }
             _context.AdTransportlines.UpdateRange(adtls);
-            _context.AdBans.Remove(new AdBan() { Id = adbanId });
+
+            if (efAdban.SubstituteAdURL != null)
+                _fileService.DeleteAdImage(efAdban.Ad.AdvertiserId, efAdban.SubstituteAdURL.Split("/").Last());
+
+            // TODO: this changes, if we skip the database query
+            _context.AdBans.Remove(efAdban);
+            //_context.AdBans.Remove(new AdBan() { Id = adbanId });
             await _context.SaveChangesAsync();
         }
 
         public async Task GetTransportlinesByNamesAndTimerangeAsync(AdBan adban)
         {
             List<AdTransportline> results;
+            var queryOnlyTheSelectedAd = _context.AdTransportlines
+                .Where(x => x.AdId == adban.AdId);
+
             if(adban.StartTime != null && adban.VehicleNames.Count != 0)
             {
-                results = await _context.AdTransportlines
+                results = await queryOnlyTheSelectedAd
                     .Where(x => x.Transportline.StartTime >= adban.StartTime &&
                                 x.Transportline.EndTime <= adban.EndTime && 
                                 adban.VehicleNames.Contains(x.Transportline.Name))
@@ -69,13 +91,13 @@ namespace AdvertisingSystem.Bll.Services
             }
             else if(adban.VehicleNames.Count != 0)
             {
-                results = await _context.AdTransportlines
+                results = await queryOnlyTheSelectedAd
                     .Where(x => adban.VehicleNames.Contains(x.Transportline.Name))
                     .ToListAsync();
             }
             else
             {
-                results = await _context.AdTransportlines
+                results = await queryOnlyTheSelectedAd
                     .Where(x => x.Transportline.StartTime >= adban.StartTime && 
                                 x.Transportline.EndTime <= adban.EndTime)
                     .ToListAsync();
@@ -95,16 +117,16 @@ namespace AdvertisingSystem.Bll.Services
         {
             var transportline = await _context.Transportlines
                 .ProjectTo<TransportlineDTO>(_mapper.ConfigurationProvider)
-                .SingleOrDefaultAsync(t => t.Id == tlId);
-            // TODO : Check for null with exception
+                .SingleOrDefaultAsync(t => t.Id == tlId)
+                ?? throw new EntityNotFoundException("Can't find the selected transportline!");
+
             return transportline;
         }
 
         public async Task<TransportlineDTO> InsertTransportlineAsync(TransportlineDTO transportline)
         {
             var efTransportline = _mapper.Map<Transportline>(transportline);
-            // TODO: Is AddAsync necessary here?
-            await _context.Transportlines.AddAsync(efTransportline);
+            _context.Transportlines.Add(efTransportline);
             await _context.SaveChangesAsync();
             return await GetTransportlineAsync(efTransportline.Id);
         }
@@ -119,10 +141,10 @@ namespace AdvertisingSystem.Bll.Services
             return transportlines;
         }
 
-        public async Task<IEnumerable<AdDTO>> GetAdsAsync()
+        public async Task<IEnumerable<AdResponseDTO>> GetAdsAsync()
         {
             return await _context.Ads
-                .ProjectTo<AdDTO>(_mapper.ConfigurationProvider)
+                .ProjectTo<AdResponseDTO>(_mapper.ConfigurationProvider)
                 .ToListAsync();
         }
 
@@ -130,11 +152,11 @@ namespace AdvertisingSystem.Bll.Services
         {
             var user = await _userManager.FindByNameAsync(userCred.UserName);
             if (user == null)
-                throw new NotImplementedException("Login failed: Can't find user!");
+                throw new FailedLoginOrRegisterException("Login failed: Can't find user!");
 
             var result = _userManager.PasswordHasher.VerifyHashedPassword(user, user.PasswordHash, userCred.Password);
             if (result == PasswordVerificationResult.Failed)
-                throw new NotImplementedException("Login failed: Password is not correct!");
+                throw new FailedLoginOrRegisterException("Login failed: Password is not correct!");
 
             return _mapper.Map<ApplicationUserDTO>(user);
         }

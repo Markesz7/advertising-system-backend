@@ -1,6 +1,9 @@
 ﻿using AdvertisingSystem.Bll.Dtos;
 using AdvertisingSystem.Bll.Interfaces;
+using AdvertisingSystem.Bll.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -12,10 +15,23 @@ namespace AdvertisingSystem.Api.Controllers
     public class VehicleController : ControllerBase
     {
         private readonly IVehicleService _vehicleService;
+        private readonly IFileService _fileService;
 
-        public VehicleController(IVehicleService vehicleService)
+        public VehicleController(IVehicleService vehicleService, IFileService fileService)
         {
             _vehicleService = vehicleService;
+            _fileService = fileService;
+        }
+
+        // POST api/<VehicleController>/5/image/46d359f1
+        [HttpPost("{advertiserid}/image/{adPictureId}")]
+        public ActionResult GetImage(int advertiserid, string adPictureId, [FromBody] string secret)
+        {
+            if (secret != "123")
+                return StatusCode(403);
+
+            var image = _fileService.LoadAdImage(advertiserid, adPictureId);
+            return File(image, "image/jpeg");
         }
 
         // POST: api/<VehicleController>/5

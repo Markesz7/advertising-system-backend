@@ -4,6 +4,7 @@ using AdvertisingSystem.Dal;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AdvertisingSystem.Dal.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221125203126_AddImagePath")]
+    partial class AddImagePath
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -356,21 +358,21 @@ namespace AdvertisingSystem.Dal.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "d105a3f8-8326-4d0b-8702-1dd05b1c292f",
+                            ConcurrencyStamp = "d05e710a-89d5-4ecd-82b1-cc85ea26a77a",
                             Name = "transportcompany",
                             NormalizedName = "TRANSPORTCOMPANY"
                         },
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "06c1866d-8342-4058-9ca8-becf48af5801",
+                            ConcurrencyStamp = "f00f83a8-ee99-4783-a136-df152cb3257f",
                             Name = "adorganizer",
                             NormalizedName = "ADORGANIZER"
                         },
                         new
                         {
                             Id = 3,
-                            ConcurrencyStamp = "6bd546e5-1692-4b65-a9d3-d5a42eafd0df",
+                            ConcurrencyStamp = "61bce73b-06d6-454d-93ba-0dc3a27220ca",
                             Name = "advertiser",
                             NormalizedName = "ADVERTISER"
                         });
@@ -507,15 +509,14 @@ namespace AdvertisingSystem.Dal.Migrations
                         {
                             Id = 2,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "7b706058-f07d-46b7-b1a2-d83f01dba513",
+                            ConcurrencyStamp = "7d19096f-406d-4b9d-a3ed-0e69b5a3cd19",
                             Email = "testAdOrg@test.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
-                            NormalizedUserName = "TESTADORG",
-                            PasswordHash = "AQAAAAEAACcQAAAAED00lMiLz0oNYn+i73c2E4mZFJoWVmztgAZY/T8fMFzm9LZXqMgwXjP1kSHWZuQ/+g==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEKTaCnVcd/zOMQLjojs0m525aKsiFAv9SzjTnHWfRrQ5Fn6hkuElDPdl7nKPt6LCDw==",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
-                            UserName = "testadorg"
+                            UserName = "t3"
                         });
                 });
 
@@ -536,15 +537,14 @@ namespace AdvertisingSystem.Dal.Migrations
                         {
                             Id = 3,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "6bc0efe3-7962-449e-bea3-e8d0680fdec5",
+                            ConcurrencyStamp = "0a2cbf1d-729c-494d-9e45-ad864230ff35",
                             Email = "testAdvertiser@test.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
-                            NormalizedUserName = "TESTADV",
-                            PasswordHash = "AQAAAAEAACcQAAAAEE31gxXLX7K2sdroaRxdUN5g2jR1UQdM/m3M28PnA0N9FHKEY00dVcc6QHLiwky3TA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEOV+Kxlm5jEtjWTFei/SzCGovsOC1KqQZTR09k6T28OJvcdk3HuL37s0MOMC9PgCXw==",
                             PhoneNumberConfirmed = true,
                             TwoFactorEnabled = false,
-                            UserName = "testadv",
+                            UserName = "t2",
                             Enabled = true,
                             Money = 100
                         });
@@ -561,15 +561,14 @@ namespace AdvertisingSystem.Dal.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "8303402d-e1ed-4936-b424-d22add72841f",
+                            ConcurrencyStamp = "6a505445-b9ff-4525-be68-91003aee693f",
                             Email = "test@test.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
-                            NormalizedUserName = "TESTTC",
-                            PasswordHash = "AQAAAAEAACcQAAAAEANl+Xw3L5h+TnawJ5nsRXDIDwrbMjMFBJBbsEhWuwD6LQEDAYbiW1YPACIZbLP5Cg==",
+                            PasswordHash = "AQAAAAEAACcQAAAAECw2tFoQKZN6ib45jwz7WwGOz8qHWq+vUSQlldU4rV9RP69lwtTNtWL7E3IM+AT3/w==",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
-                            UserName = "testtc"
+                            UserName = "t"
                         });
                 });
 

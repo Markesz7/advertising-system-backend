@@ -87,7 +87,8 @@ namespace AdvertisingSystem.Dal
                 Id = 1,
                 Email = "test@test.com",
                 EmailConfirmed = true,
-                UserName = "t",
+                UserName = "testtc",
+                NormalizedUserName = "TESTTC"
             };
             tc.PasswordHash = ph.HashPassword(tc, "123");
             builder.Entity<TransportCompany>().HasData(tc);
@@ -97,7 +98,8 @@ namespace AdvertisingSystem.Dal
                 Id = 2,
                 Email = "testAdOrg@test.com",
                 EmailConfirmed = true,
-                UserName = "t3"
+                UserName = "testadorg",
+                NormalizedUserName = "TESTADORG"
             };
             adOrg.PasswordHash = ph.HashPassword(adOrg, "345");
             builder.Entity<AdOrganiser>().HasData(adOrg);
@@ -107,7 +109,8 @@ namespace AdvertisingSystem.Dal
                 Id = 3,
                 Email = "testAdvertiser@test.com",
                 EmailConfirmed = true,
-                UserName = "t2",
+                UserName = "testadv",
+                NormalizedUserName = "TESTADV",
                 Money = 100,
                 Enabled = true,
                 PhoneNumberConfirmed = true
@@ -125,7 +128,7 @@ namespace AdvertisingSystem.Dal
             });
 
             // Seed test ads
-            Ad ad1 = new Ad("Monthly", "test.com")
+            Ad ad1 = new Ad("Monthly", $"api/advertiser/{adv.Id}/image/abc123de", $"images/advertisers/{adv.Id}/abc123de.jpg")
             {
                 Id = 1,
                 PlaceGroups = new List<string>() { "Tram" },
@@ -134,7 +137,7 @@ namespace AdvertisingSystem.Dal
                 AdvertiserId = adv.Id
             };
 
-            Ad ad2 = new Ad("Wallet", "test2.com")
+            Ad ad2 = new Ad("Wallet", $"api/advertiser/{adv.Id}/image/cba321ed", $"images/advertisers/{adv.Id}/cba321ed.jpg")
             {
                 Id = 2,
                 PlaceGroups = new List<string>() { "Bus" },
