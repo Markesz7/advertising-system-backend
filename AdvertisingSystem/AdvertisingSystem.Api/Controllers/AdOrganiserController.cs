@@ -63,19 +63,19 @@ namespace AdvertisingSystem.Api.Controllers
             return advertiser.ToList();
         }
 
-        // POST api/<AdOrganiser>
-        [HttpPost("toggleadvertiser")]
-        public async Task<ActionResult> ToggleAdvertiser([FromBody] ToggleAdvertiserDTO advertiser)
-        {
-            await _adOrganiserService.ToggleUserAsync(advertiser);
-            return NoContent();
-        }
-
         // POST api/<AdOrganiser>/dobooking
         [HttpPost("dobooking")]
         public async Task<ActionResult> DoBooking()
         {
             await _adOrganiserService.DoBookingAsync();
+            return NoContent();
+        }
+
+        // PUT api/<AdOrganiser>/toggleadvertiser
+        [HttpPut("toggleadvertiser")]
+        public async Task<ActionResult> ToggleAdvertiser([FromBody] ToggleAdvertiserDTO advertiser)
+        {
+            await _adOrganiserService.ToggleUserAsync(advertiser);
             return NoContent();
         }
 

@@ -1,9 +1,11 @@
 using AdvertisingSystem.Api.PolicyRequirements;
 using AdvertisingSystem.Bll.Dtos;
+using AdvertisingSystem.Bll.Exceptions;
 using AdvertisingSystem.Bll.Interfaces;
 using AdvertisingSystem.Bll.Services;
 using AdvertisingSystem.Dal;
 using AdvertisingSystem.Dal.Entities;
+using Hellang.Middleware.ProblemDetails;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -48,6 +50,7 @@ builder.Services.AddTransient<IVehicleService, VehicleService>();
 builder.Services.AddTransient<IAdOrganiserService, AdOrganiserService>();
 builder.Services.AddTransient<IAdvertiserService, AdvertiserService>();
 
+builder.Services.AddSingleton<IFileService, FileService>();
 builder.Services.AddSingleton<IAuthorizationHandler, UserIsResourceOwnerHandler>();
 
 // ASP.net automatically redirects to a login page when 401 or 403 statusCode is the answer.
@@ -99,9 +102,43 @@ builder.Services.AddIdentityCore<TransportCompany>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
+builder.Services.AddProblemDetails(options =>
+{
+    options.IncludeExceptionDetails = (ctx, ex) => false;
+
+    options.Map<EntityNotFoundException>(
+        (ctx, ex) =>
+        {
+            var pd = StatusCodeProblemDetails.Create(StatusCodes.Status404NotFound);
+            pd.Title = ex.Message;
+            return pd;
+        }
+    );
+
+    options.Map<FailedLoginOrRegisterException>(
+        (ctx, ex) =>
+        {
+            var pd = StatusCodeProblemDetails.Create(StatusCodes.Status401Unauthorized);
+            pd.Title = ex.Message;
+            return pd;
+        }
+    );
+
+    options.Map<UserNotEnabledException>(
+        (ctx, ex) =>
+        {
+            var pd = StatusCodeProblemDetails.Create(StatusCodes.Status403Forbidden);
+            pd.Title = ex.Message;
+            return pd;
+        }
+    );
+});
+
 builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
+
+app.UseProblemDetails();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -109,6 +146,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// File service shouldn't be null here
+var fileService = app.Services.GetService<IFileService>();
+fileService!.CurrentRootDirectory = app.Environment.ContentRootPath;
 
 app.UseAuthentication();
 app.UseAuthorization();

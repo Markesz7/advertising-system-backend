@@ -1,4 +1,5 @@
 ﻿using AdvertisingSystem.Bll.Dtos;
+using AdvertisingSystem.Bll.Exceptions;
 using AdvertisingSystem.Bll.Interfaces;
 using AdvertisingSystem.Dal;
 using AdvertisingSystem.Dal.Entities;
@@ -6,7 +7,6 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Claims;
 
 namespace AdvertisingSystem.Bll.Services
 {
@@ -32,12 +32,18 @@ namespace AdvertisingSystem.Bll.Services
                 .ToListAsync();
         }
 
-        public async Task<AdDTO> InsertAdAsync(AdDTO ad)
+        public async Task<AdResponseDTO> InsertAdAsync(AdRequestDTO ad, int advertiserId, string imagePath)
         {
+            // TODO: This is kind of a bad solution for this
+            ad.ImagePath = imagePath;
+            ad.AdURL = $"api/advertiser/{advertiserId}/image/{imagePath.Split("\\").Last()}";
+            ad.AdvertiserId = advertiserId;
+
             var efAd = _mapper.Map<Ad>(ad);
             efAd.Occurence = 0;
             if (efAd.PaymentMethod == "Wallet")
                 efAd.TargetOccurence = null;
+
             _context.Ads.Add(efAd);
 
             var tls = await _context.Transportlines
@@ -63,28 +69,30 @@ namespace AdvertisingSystem.Bll.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<AdDTO>> GetAdsByUserAsync(int advertiserId)
+        public async Task<IEnumerable<AdResponseDTO>> GetAdsByUserAsync(int advertiserId)
         {
             return await _context.Ads
                 .Where(ad => ad.AdvertiserId == advertiserId)
-                .ProjectTo<AdDTO>(_mapper.ConfigurationProvider)
+                .ProjectTo<AdResponseDTO>(_mapper.ConfigurationProvider)
                 .ToListAsync();
         }
 
-        public async Task<AdDTO> GetAdAsync(int adId)
+        public async Task<AdResponseDTO> GetAdAsync(int adId)
         {
             var ad = await _context.Ads
-                .ProjectTo<AdDTO>(_mapper.ConfigurationProvider)
-                .SingleOrDefaultAsync(t => t.Id == adId);
-            // TODO : Check for null with exception
+                .ProjectTo<AdResponseDTO>(_mapper.ConfigurationProvider)
+                .SingleOrDefaultAsync(t => t.Id == adId)
+                ?? throw new EntityNotFoundException("Can't find the selected ad!");
+
             return ad;
         }
 
         public async Task<AdvertiserDTO> GetAdvertiserAsync(int advertiserId)
         {
             var advertiser = await _context.Advertisers
-                            .ProjectTo<AdvertiserDTO>(_mapper.ConfigurationProvider)
-                            .SingleAsync(t => t.Id == advertiserId);
+                .ProjectTo<AdvertiserDTO>(_mapper.ConfigurationProvider)
+                .SingleOrDefaultAsync(t => t.Id == advertiserId)
+                ?? throw new EntityNotFoundException("Can't find the selected advertiser!");
 
             return advertiser;
         }
@@ -101,7 +109,7 @@ namespace AdvertisingSystem.Bll.Services
             var result = await _userManager.CreateAsync(efAdvertiser, advertiser.Password);
             if(!result.Succeeded)
             {
-                throw new NotImplementedException(result.Errors.First().Description);
+                throw new FailedLoginOrRegisterException(result.Errors.First().Description);
             }
 
             await _userManager.AddToRoleAsync(efAdvertiser, "advertiser");
@@ -113,13 +121,18 @@ namespace AdvertisingSystem.Bll.Services
         {
             var user = await _userManager.FindByNameAsync(userCred.UserName);
             if (user == null)
-                throw new NotImplementedException("Login failed: Can't find user!");
+                throw new FailedLoginOrRegisterException("Login failed: Can't find user!");
 
-            var result = _userManager.PasswordHasher.VerifyHashedPassword(user, user.PasswordHash, userCred.Password);
-            if (result == PasswordVerificationResult.Failed)
-                throw new NotImplementedException("Login failed: Password is not correct!");
+            if (user.Enabled)
+            {
+                var result = _userManager.PasswordHasher.VerifyHashedPassword(user, user.PasswordHash, userCred.Password);
+                if (result == PasswordVerificationResult.Failed)
+                    throw new FailedLoginOrRegisterException("Login failed: Password is not correct!");
 
-            return _mapper.Map<ApplicationUserDTO>(user);
+                return _mapper.Map<ApplicationUserDTO>(user);
+            }
+            else
+                throw new UserNotEnabledException("Advertiser is not enabled!");
         }
     }
 }
