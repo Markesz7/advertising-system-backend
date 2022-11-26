@@ -30,7 +30,18 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 builder.Services.AddDbContext<AppDbContext>(o =>
-    o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    var isDev = builder.Environment.IsDevelopment();
+    if (isDev)
+        o.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    else
+    {
+        var password = builder.Configuration["SA_PASSWORD"] ?? "";
+        var connectionStringWithoutPassword = builder.Configuration.GetConnectionString("DefaultConnection");
+        var connectionString = connectionStringWithoutPassword + $"Password={password};";
+        o.UseSqlServer(connectionString);
+    }
+});
 
 builder.Services.AddAutoMapper(typeof(WebApiProfile));
 
@@ -144,5 +155,11 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+using (var serviceScope = app.Services.GetService<IServiceScopeFactory>().CreateScope())
+{
+    var context = serviceScope.ServiceProvider.GetRequiredService<AppDbContext>();
+    context.Database.Migrate();
+}
 
 app.Run();

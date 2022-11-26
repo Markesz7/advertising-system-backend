@@ -1,0 +1,22 @@
+﻿version: "3.4"
+
+services:
+    api:
+        build:
+          context: .
+          dockerfile: AdvertisingSystem.Api/Dockerfile
+        ports:
+          - "49155:80"
+        depends_on:
+          - db
+        environment:
+            SA_PASSWORD: "${SA_PASSWORD}"
+
+    db:
+        image: "mcr.microsoft.com/mssql/server:2022-latest"
+        ports:
+          - "1433:1433"
+
+        environment:
+            SA_PASSWORD: "${SA_PASSWORD}"
+            ACCEPT_EULA: "Y"
