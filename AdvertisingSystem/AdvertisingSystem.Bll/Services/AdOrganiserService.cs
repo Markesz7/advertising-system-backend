@@ -1,4 +1,5 @@
 ﻿using AdvertisingSystem.Bll.Dtos;
+using AdvertisingSystem.Bll.Exceptions;
 using AdvertisingSystem.Bll.Interfaces;
 using AdvertisingSystem.Dal;
 using AdvertisingSystem.Dal.Entities;
@@ -15,9 +16,9 @@ namespace AdvertisingSystem.Bll.Services
         private readonly IMapper _mapper;
         private readonly IFileService _fileService;
 
-        private readonly UserManager<TransportCompany> _userManager;
+        private readonly UserManager<AdOrganiser> _userManager;
 
-        public AdOrganiserService(IMapper mapper, AppDbContext context, UserManager<TransportCompany> userManager, IFileService fileService)
+        public AdOrganiserService(IMapper mapper, AppDbContext context, UserManager<AdOrganiser> userManager, IFileService fileService)
         {
             _mapper = mapper;
             _context = context;
@@ -91,11 +92,11 @@ namespace AdvertisingSystem.Bll.Services
             await _context.SaveChangesAsync();
         }
 
-        // TODO
         public async Task ToggleUserAsync(ToggleAdvertiserDTO advertiser)
         {
-            var efAdvertiser = _mapper.Map<Advertiser>(advertiser);
-            _context.Entry(efAdvertiser).State = EntityState.Modified;
+            // TODO: Check for a better version
+            var efAdvertiser = await _context.Advertisers.SingleOrDefaultAsync(x => x.Id == advertiser.Id);
+            efAdvertiser.Enabled = advertiser.Enabled;
             await _context.SaveChangesAsync();
         }
 
@@ -110,11 +111,11 @@ namespace AdvertisingSystem.Bll.Services
         {
             var user = await _userManager.FindByNameAsync(userCred.UserName);
             if (user == null)
-                throw new NotImplementedException("Login failed: Can't find user!");
+                throw new FailedLoginOrRegisterException("Login failed: Can't find user!");
 
             var result = _userManager.PasswordHasher.VerifyHashedPassword(user, user.PasswordHash, userCred.Password);
             if (result == PasswordVerificationResult.Failed)
-                throw new NotImplementedException("Login failed: Password is not correct!");
+                throw new FailedLoginOrRegisterException("Login failed: Password is not correct!");
 
             return _mapper.Map<ApplicationUserDTO>(user);
         }

@@ -1,6 +1,5 @@
 ﻿using AdvertisingSystem.Dal.Entities;
 using AutoMapper;
-using Microsoft.Data.SqlClient;
 
 namespace AdvertisingSystem.Bll.Dtos
 {
@@ -8,7 +7,6 @@ namespace AdvertisingSystem.Bll.Dtos
     {
         public WebApiProfile()
         {
-            // This creates a two way map.
             CreateMap<Ad, AdResponseDTO>();
             CreateMap<AdRequestDTO, Ad>();
             CreateMap<Transportline, TransportlineDTO>().ReverseMap();
@@ -23,7 +21,8 @@ namespace AdvertisingSystem.Bll.Dtos
             CreateMap<ToggleAdvertiserDTO, Advertiser>();
             CreateMap<MoneyDTO, Advertiser>();
             // TODO: This solution is complex, check if there is a better one
-            // The nullable warnings can't ne null, disable it in the future
+            // SubstituteAdURL can't be null, because we are only querying the ads in the service
+            // where there IS a substituteAdUrl.
             CreateMap<Ad, VehicleAdDTO>();
             CreateMap<AdTransportline, VehicleAdDTO>()
                 .ConvertUsing(source => new VehicleAdDTO(
@@ -31,7 +30,7 @@ namespace AdvertisingSystem.Bll.Dtos
                     source.AdBan == null ? 0 : -1, 
                     source.AdBan == null ? 
                         source.Ad.AdURL.Remove(4, 10).Insert(4, "vehicle") : 
-                        source.AdBan.SubstituteAdURL.Remove(4, 10).Insert(4, "vehicle")));
+                        source.AdBan.SubstituteAdURL!.Remove(4, 10).Insert(4, "vehicle")));
 
             
         }

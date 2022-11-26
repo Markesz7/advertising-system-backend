@@ -1,11 +1,10 @@
 ﻿using AdvertisingSystem.Bll.Dtos;
+using AdvertisingSystem.Bll.Exceptions;
 using AdvertisingSystem.Bll.Interfaces;
 using AdvertisingSystem.Dal;
 using AdvertisingSystem.Dal.Entities;
-using AdvertisingSystem.Dal.Helper;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -82,16 +81,18 @@ namespace AdvertisingSystem.Bll.Services
         {
             var ad = await _context.Ads
                 .ProjectTo<AdResponseDTO>(_mapper.ConfigurationProvider)
-                .SingleOrDefaultAsync(t => t.Id == adId);
-            // TODO : Check for null with exception
+                .SingleOrDefaultAsync(t => t.Id == adId)
+                ?? throw new EntityNotFoundException("Can't find the selected ad!");
+
             return ad;
         }
 
         public async Task<AdvertiserDTO> GetAdvertiserAsync(int advertiserId)
         {
             var advertiser = await _context.Advertisers
-                            .ProjectTo<AdvertiserDTO>(_mapper.ConfigurationProvider)
-                            .SingleAsync(t => t.Id == advertiserId);
+                .ProjectTo<AdvertiserDTO>(_mapper.ConfigurationProvider)
+                .SingleOrDefaultAsync(t => t.Id == advertiserId)
+                ?? throw new EntityNotFoundException("Can't find the selected advertiser!");
 
             return advertiser;
         }
@@ -108,7 +109,7 @@ namespace AdvertisingSystem.Bll.Services
             var result = await _userManager.CreateAsync(efAdvertiser, advertiser.Password);
             if(!result.Succeeded)
             {
-                throw new NotImplementedException(result.Errors.First().Description);
+                throw new FailedLoginOrRegisterException(result.Errors.First().Description);
             }
 
             await _userManager.AddToRoleAsync(efAdvertiser, "advertiser");
@@ -120,18 +121,18 @@ namespace AdvertisingSystem.Bll.Services
         {
             var user = await _userManager.FindByNameAsync(userCred.UserName);
             if (user == null)
-                throw new NotImplementedException("Login failed: Can't find user!");
+                throw new FailedLoginOrRegisterException("Login failed: Can't find user!");
 
             if (user.Enabled)
             {
                 var result = _userManager.PasswordHasher.VerifyHashedPassword(user, user.PasswordHash, userCred.Password);
                 if (result == PasswordVerificationResult.Failed)
-                    throw new NotImplementedException("Login failed: Password is not correct!");
+                    throw new FailedLoginOrRegisterException("Login failed: Password is not correct!");
 
                 return _mapper.Map<ApplicationUserDTO>(user);
             }
             else
-                throw new NotImplementedException("Login failed: Advertiser is not enabled!");
+                throw new UserNotEnabledException("Advertiser is not enabled!");
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using AdvertisingSystem.Bll.Dtos;
+using AdvertisingSystem.Bll.Exceptions;
 using AdvertisingSystem.Bll.Interfaces;
 using AdvertisingSystem.Dal;
 using AdvertisingSystem.Dal.Entities;
@@ -41,22 +42,23 @@ namespace AdvertisingSystem.Bll.Services
 
         public async Task<AdBanDTO> GetAdBanAsync(int adbanId)
         {
-            // TODO: Check for null reference
             return await _context.AdBans
                 .ProjectTo<AdBanDTO>(_mapper.ConfigurationProvider)
-                .SingleOrDefaultAsync(adban => adban.Id == adbanId);
+                .SingleOrDefaultAsync(adban => adban.Id == adbanId)
+                ?? throw new EntityNotFoundException("Can't find the selected adban!");
         }
 
         public async Task EnableAdAsync(int adbanId)
         {
-            var adtls = await _context.AdTransportlines
-                .Where(adtl => adtl.AdBanId == adbanId).ToListAsync();
-
             // TODO: We can skip this, if the picture id and adban id is the same or the image structure is different
-            // TODO: Check for null
             var efAdban = await _context.AdBans
                 .Include(adban => adban.Ad)
-                .SingleOrDefaultAsync(adban => adban.Id == adbanId);
+                .SingleOrDefaultAsync(adban => adban.Id == adbanId)
+                ?? throw new EntityNotFoundException("Can't find the selected adban!");
+
+            // TODO: Maybe merge this query with the adban query
+            var adtls = await _context.AdTransportlines
+                .Where(adtl => adtl.AdBanId == adbanId).ToListAsync();
 
             foreach (var adtl in adtls)
             {
@@ -115,16 +117,16 @@ namespace AdvertisingSystem.Bll.Services
         {
             var transportline = await _context.Transportlines
                 .ProjectTo<TransportlineDTO>(_mapper.ConfigurationProvider)
-                .SingleOrDefaultAsync(t => t.Id == tlId);
-            // TODO : Check for null with exception
+                .SingleOrDefaultAsync(t => t.Id == tlId)
+                ?? throw new EntityNotFoundException("Can't find the selected transportline!");
+
             return transportline;
         }
 
         public async Task<TransportlineDTO> InsertTransportlineAsync(TransportlineDTO transportline)
         {
             var efTransportline = _mapper.Map<Transportline>(transportline);
-            // TODO: Is AddAsync necessary here?
-            await _context.Transportlines.AddAsync(efTransportline);
+            _context.Transportlines.Add(efTransportline);
             await _context.SaveChangesAsync();
             return await GetTransportlineAsync(efTransportline.Id);
         }
@@ -150,11 +152,11 @@ namespace AdvertisingSystem.Bll.Services
         {
             var user = await _userManager.FindByNameAsync(userCred.UserName);
             if (user == null)
-                throw new NotImplementedException("Login failed: Can't find user!");
+                throw new FailedLoginOrRegisterException("Login failed: Can't find user!");
 
             var result = _userManager.PasswordHasher.VerifyHashedPassword(user, user.PasswordHash, userCred.Password);
             if (result == PasswordVerificationResult.Failed)
-                throw new NotImplementedException("Login failed: Password is not correct!");
+                throw new FailedLoginOrRegisterException("Login failed: Password is not correct!");
 
             return _mapper.Map<ApplicationUserDTO>(user);
         }
