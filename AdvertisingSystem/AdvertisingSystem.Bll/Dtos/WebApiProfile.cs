@@ -1,5 +1,6 @@
 ﻿using AdvertisingSystem.Dal.Entities;
 using AutoMapper;
+using Microsoft.Data.SqlClient;
 
 namespace AdvertisingSystem.Bll.Dtos
 {
@@ -28,7 +29,9 @@ namespace AdvertisingSystem.Bll.Dtos
                 .ConvertUsing(source => new VehicleAdDTO(
                     source.Ad.Id, 
                     source.AdBan == null ? 0 : -1, 
-                    source.AdBan == null ? source.Ad.AdURL : source.AdBan.SubstituteAdURL));
+                    source.AdBan == null ? 
+                        source.Ad.AdURL.Remove(4, 10).Insert(4, "vehicle") : 
+                        source.AdBan.SubstituteAdURL.Remove(4, 10).Insert(4, "vehicle")));
 
             
         }

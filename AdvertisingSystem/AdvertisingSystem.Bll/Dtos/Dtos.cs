@@ -15,14 +15,16 @@ namespace AdvertisingSystem.Bll.Dtos
     public record MoneyDTO(int Id, int Amount);
     public record AdBanDTO
     {
-        public int Id { get; init; }
+        public int? Id { get; init; }
         [JsonConverter(typeof(TimeOnlyJSONConverter))]
         public TimeOnly? StartTime { get; init; }
         [JsonConverter(typeof(TimeOnlyJSONConverter))]
         public TimeOnly? EndTime { get; init; }
         public List<string> VehicleNames { get; init; } = null!;
         public int AdId { get; set; }
-        //public IFormFile? SubstituteAdImage { get; init; }
+        public int AdvertiserId { get; set; }
+        public IFormFile? SubstituteAdImage { get; init; }
+        public string? SubstituteAdURL { get; set; }
     }
 
     public record AdvertiserDTO

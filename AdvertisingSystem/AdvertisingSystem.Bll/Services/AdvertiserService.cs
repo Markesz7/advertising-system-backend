@@ -45,9 +45,6 @@ namespace AdvertisingSystem.Bll.Services
             if (efAd.PaymentMethod == "Wallet")
                 efAd.TargetOccurence = null;
 
-            //efAd.ImagePath = imagePath;
-            //efAd.AdURL = $"api/advertiser/{efAd.AdvertiserId}/image/{imagePath.Split("/").Last()}";
-
             _context.Ads.Add(efAd);
 
             var tls = await _context.Transportlines
@@ -125,11 +122,16 @@ namespace AdvertisingSystem.Bll.Services
             if (user == null)
                 throw new NotImplementedException("Login failed: Can't find user!");
 
-            var result = _userManager.PasswordHasher.VerifyHashedPassword(user, user.PasswordHash, userCred.Password);
-            if (result == PasswordVerificationResult.Failed)
-                throw new NotImplementedException("Login failed: Password is not correct!");
+            if (user.Enabled)
+            {
+                var result = _userManager.PasswordHasher.VerifyHashedPassword(user, user.PasswordHash, userCred.Password);
+                if (result == PasswordVerificationResult.Failed)
+                    throw new NotImplementedException("Login failed: Password is not correct!");
 
-            return _mapper.Map<ApplicationUserDTO>(user);
+                return _mapper.Map<ApplicationUserDTO>(user);
+            }
+            else
+                throw new NotImplementedException("Login failed: Advertiser is not enabled!");
         }
     }
 }

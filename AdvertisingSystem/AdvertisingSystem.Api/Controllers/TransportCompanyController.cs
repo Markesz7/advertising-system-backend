@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using AdvertisingSystem.Bll.Services;
+using AdvertisingSystem.Dal.Entities;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -17,10 +19,12 @@ namespace AdvertisingSystem.Api.Controllers
     public class TransportCompanyController : ControllerBase
     {
         private readonly ITransportCompanyService _transportCompanyService;
+        private readonly IFileService _fileService;
 
-        public TransportCompanyController(ITransportCompanyService transportCompanyService)
+        public TransportCompanyController(ITransportCompanyService transportCompanyService, IFileService fileService)
         {
             _transportCompanyService = transportCompanyService;
+            _fileService = fileService;
         }
 
         // POST api/<TransportCompanyController>/login
@@ -88,13 +92,18 @@ namespace AdvertisingSystem.Api.Controllers
 
         // POST api/<TransportCompanyController>/addadban
         [HttpPost("addadban")]
-        public async Task<ActionResult<AdBanDTO>> BanAd([FromBody] AdBanDTO adban)
+        [RequestSizeLimit(15 * 1024 * 1024)]
+        public async Task<ActionResult<AdBanDTO>> BanAd([FromForm] AdBanDTO adban)
         {
             // TODO: This logic should not be here
             if (adban.VehicleNames.Count == 0 && (adban.StartTime == null || adban.EndTime == null))
                 return BadRequest();
 
-            var newAdBan = await _transportCompanyService.BanAdAsync(adban);
+            string adpath = "";
+            if(adban.SubstituteAdImage != null)
+                adpath = await _fileService.SaveAdImageAsync(adban.SubstituteAdImage, adban.AdvertiserId);
+
+            var newAdBan = await _transportCompanyService.BanAdAsync(adban, adpath);
             return CreatedAtAction(nameof(BanAd), new { id = newAdBan.Id }, newAdBan);
         }
 

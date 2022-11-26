@@ -14,18 +14,23 @@ namespace AdvertisingSystem.Bll.Services
     {
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IFileService _fileService;
 
         private readonly UserManager<TransportCompany> _userManager;
 
-        public TransportCompanyService(AppDbContext appDbContext, IMapper mapper, UserManager<TransportCompany> userManager)
+        public TransportCompanyService(AppDbContext appDbContext, IMapper mapper, UserManager<TransportCompany> userManager, IFileService fileService)
         {
             _context = appDbContext;
             _mapper = mapper;
             _userManager = userManager;
+            _fileService = fileService;
         }
 
-        public async Task<AdBanDTO> BanAdAsync(AdBanDTO adban)
+        public async Task<AdBanDTO> BanAdAsync(AdBanDTO adban, string imagePath)
         {
+            if(imagePath != "")
+                adban.SubstituteAdURL = $"api/advertiser/{adban.AdvertiserId}/image/{imagePath.Split("\\").Last()}";
+
             var efAdban = _mapper.Map<AdBan>(adban);
             await GetTransportlinesByNamesAndTimerangeAsync(efAdban);
 
@@ -47,21 +52,36 @@ namespace AdvertisingSystem.Bll.Services
             var adtls = await _context.AdTransportlines
                 .Where(adtl => adtl.AdBanId == adbanId).ToListAsync();
 
-            foreach(var adtl in adtls)
+            // TODO: We can skip this, if the picture id and adban id is the same or the image structure is different
+            // TODO: Check for null
+            var efAdban = await _context.AdBans
+                .Include(adban => adban.Ad)
+                .SingleOrDefaultAsync(adban => adban.Id == adbanId);
+
+            foreach (var adtl in adtls)
             {
                 adtl.AdBanId = null;
             }
             _context.AdTransportlines.UpdateRange(adtls);
-            _context.AdBans.Remove(new AdBan() { Id = adbanId });
+
+            if (efAdban.SubstituteAdURL != null)
+                _fileService.DeleteAdImage(efAdban.Ad.AdvertiserId, efAdban.SubstituteAdURL.Split("/").Last());
+
+            // TODO: this changes, if we skip the database query
+            _context.AdBans.Remove(efAdban);
+            //_context.AdBans.Remove(new AdBan() { Id = adbanId });
             await _context.SaveChangesAsync();
         }
 
         public async Task GetTransportlinesByNamesAndTimerangeAsync(AdBan adban)
         {
             List<AdTransportline> results;
+            var queryOnlyTheSelectedAd = _context.AdTransportlines
+                .Where(x => x.AdId == adban.AdId);
+
             if(adban.StartTime != null && adban.VehicleNames.Count != 0)
             {
-                results = await _context.AdTransportlines
+                results = await queryOnlyTheSelectedAd
                     .Where(x => x.Transportline.StartTime >= adban.StartTime &&
                                 x.Transportline.EndTime <= adban.EndTime && 
                                 adban.VehicleNames.Contains(x.Transportline.Name))
@@ -69,13 +89,13 @@ namespace AdvertisingSystem.Bll.Services
             }
             else if(adban.VehicleNames.Count != 0)
             {
-                results = await _context.AdTransportlines
+                results = await queryOnlyTheSelectedAd
                     .Where(x => adban.VehicleNames.Contains(x.Transportline.Name))
                     .ToListAsync();
             }
             else
             {
-                results = await _context.AdTransportlines
+                results = await queryOnlyTheSelectedAd
                     .Where(x => x.Transportline.StartTime >= adban.StartTime && 
                                 x.Transportline.EndTime <= adban.EndTime)
                     .ToListAsync();

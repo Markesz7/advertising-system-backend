@@ -18,14 +18,12 @@ namespace AdvertisingSystem.Api.Controllers
     [Authorize(Policy = "RequiredAdvertiserRole")]
     public class AdvertiserController : ControllerBase
     {
-        private readonly IWebHostEnvironment _webhostEnvironment;
         private readonly IAdvertiserService _advertiserService;
         private readonly IFileService _fileService;
 
-        public AdvertiserController(IAdvertiserService advertiserService, IWebHostEnvironment env, IFileService fileService)
+        public AdvertiserController(IAdvertiserService advertiserService, IFileService fileService)
         {
             _advertiserService = advertiserService;
-            _webhostEnvironment = env;
             _fileService = fileService;
         }
 
@@ -96,12 +94,11 @@ namespace AdvertisingSystem.Api.Controllers
             return receipts.ToList();
         }
 
-        // POST api/<AdvertiserController>/5/image/46d359f1
+        // GET api/<AdvertiserController>/5/image/46d359f1
         [HttpGet("{advertiserid}/image/{adPictureId}")]
         [Authorize(Policy = "RequiredSameID")]
         public ActionResult GetImage(int advertiserid, string adPictureId)
         {
-            var currentRootDirectory = _webhostEnvironment.ContentRootPath;
             var image = _fileService.LoadAdImage(advertiserid, adPictureId);
             return File(image, "image/jpeg");
         }
@@ -111,8 +108,7 @@ namespace AdvertisingSystem.Api.Controllers
         [RequestSizeLimit(15 * 1024 * 1024)]
         public async Task<ActionResult<AdResponseDTO>> PostAd(int id, [FromForm] AdRequestDTO ad)
         {
-            var currentRootDirectory = _webhostEnvironment.ContentRootPath;
-            var adPath = await _fileService.SaveAdImageAsync(ad, id);
+            var adPath = await _fileService.SaveAdImageAsync(ad.AdImage, id);
             var newAd = await _advertiserService.InsertAdAsync(ad, id, adPath);
             return CreatedAtAction(nameof(PostAd), new { Id = newAd.Id }, newAd);
         }

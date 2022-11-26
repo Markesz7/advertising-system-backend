@@ -87,7 +87,8 @@ namespace AdvertisingSystem.Dal
                 Id = 1,
                 Email = "test@test.com",
                 EmailConfirmed = true,
-                UserName = "t",
+                UserName = "testtc",
+                NormalizedUserName = "TESTTC"
             };
             tc.PasswordHash = ph.HashPassword(tc, "123");
             builder.Entity<TransportCompany>().HasData(tc);
@@ -97,7 +98,8 @@ namespace AdvertisingSystem.Dal
                 Id = 2,
                 Email = "testAdOrg@test.com",
                 EmailConfirmed = true,
-                UserName = "t3"
+                UserName = "testadorg",
+                NormalizedUserName = "TESTADORG"
             };
             adOrg.PasswordHash = ph.HashPassword(adOrg, "345");
             builder.Entity<AdOrganiser>().HasData(adOrg);
@@ -107,7 +109,8 @@ namespace AdvertisingSystem.Dal
                 Id = 3,
                 Email = "testAdvertiser@test.com",
                 EmailConfirmed = true,
-                UserName = "t2",
+                UserName = "testadv",
+                NormalizedUserName = "TESTADV",
                 Money = 100,
                 Enabled = true,
                 PhoneNumberConfirmed = true

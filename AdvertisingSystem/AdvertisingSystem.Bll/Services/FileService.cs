@@ -2,6 +2,7 @@
 using AdvertisingSystem.Bll.Interfaces;
 using AdvertisingSystem.Dal.Entities;
 using AdvertisingSystem.Dal.Helper;
+using Microsoft.AspNetCore.Http;
 
 namespace AdvertisingSystem.Bll.Services
 {
@@ -15,15 +16,15 @@ namespace AdvertisingSystem.Bll.Services
             return File.OpenRead(Path.Combine(_currentRootDirectory, "images", "advertisers", userId.ToString(), adImageId));
         }
 
-        public async Task<string> SaveAdImageAsync(AdRequestDTO ad, int userId)
+        public async Task<string> SaveAdImageAsync(IFormFile image, int userId)
         {
-            var uniqueFileName = FileHelper.GetUniqueFileName(ad.AdImage.FileName);
+            var uniqueFileName = FileHelper.GetUniqueFileName(image.FileName);
             var uploadPathWithoutRoot = Path.Combine("images", "advertisers", userId.ToString(), uniqueFileName);
             var uploadPath = Path.Combine(_currentRootDirectory, uploadPathWithoutRoot);
             Directory.CreateDirectory(Path.GetDirectoryName(uploadPath));
             using (FileStream fs = new FileStream(uploadPath, FileMode.Create))
             {
-                await ad.AdImage.CopyToAsync(fs);
+                await image.CopyToAsync(fs);
             }
             return uploadPathWithoutRoot;
         }
