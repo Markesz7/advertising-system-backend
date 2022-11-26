@@ -36,7 +36,7 @@ namespace AdvertisingSystem.Bll.Services
         {
             // TODO: This is kind of a bad solution for this
             ad.ImagePath = imagePath;
-            ad.AdURL = $"api/advertiser/{advertiserId}/image/{imagePath.Split("\\").Last()}";
+            ad.AdURL = $"api/advertiser/{advertiserId}/image/{imagePath.Split(Path.DirectorySeparatorChar).Last()}";
             ad.AdvertiserId = advertiserId;
 
             var efAd = _mapper.Map<Ad>(ad);

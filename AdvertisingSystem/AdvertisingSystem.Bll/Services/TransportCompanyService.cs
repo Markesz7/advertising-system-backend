@@ -30,7 +30,7 @@ namespace AdvertisingSystem.Bll.Services
         public async Task<AdBanDTO> BanAdAsync(AdBanDTO adban, string imagePath)
         {
             if(imagePath != "")
-                adban.SubstituteAdURL = $"api/advertiser/{adban.AdvertiserId}/image/{imagePath.Split("\\").Last()}";
+                adban.SubstituteAdURL = $"api/advertiser/{adban.AdvertiserId}/image/{imagePath.Split(Path.DirectorySeparatorChar).Last()}";
 
             var efAdban = _mapper.Map<AdBan>(adban);
             await GetTransportlinesByNamesAndTimerangeAsync(efAdban);
