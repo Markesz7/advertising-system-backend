@@ -72,6 +72,7 @@ namespace AdvertisingSystem.Bll.Services
                     _context.Ads.Remove(ad);
                     _fileService.DeleteAdImage(ad.AdvertiserId, ad.ImagePath.Split("/").Last());
                 }
+                ad.Occurence = 0;
             }
 
             // TransportCompany - AdOrganiser will get 50-50% revenue

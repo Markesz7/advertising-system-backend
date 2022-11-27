@@ -96,7 +96,8 @@ namespace AdvertisingSystem.Api.Controllers
 
         // GET api/<AdvertiserController>/5/image/46d359f1
         [HttpGet("{advertiserid}/image/{adPictureId}")]
-        [Authorize(Policy = "RequiredSameID")]
+        //[Authorize(Policy = "RequiredSameID")]
+        [AllowAnonymous]
         public ActionResult GetImage(int advertiserid, string adPictureId)
         {
             var image = _fileService.LoadAdImage(advertiserid, adPictureId);
