@@ -108,6 +108,9 @@ namespace AdvertisingSystem.Api.Controllers
         [RequestSizeLimit(15 * 1024 * 1024)]
         public async Task<ActionResult<AdResponseDTO>> PostAd(int id, [FromForm] AdRequestDTO ad)
         {
+            if (ad.TargetOccurence == null && ad.PaymentMethod == "Monthly")
+                return BadRequest();
+
             var adPath = await _fileService.SaveAdImageAsync(ad.AdImage, id);
             var newAd = await _advertiserService.InsertAdAsync(ad, id, adPath);
             return CreatedAtAction(nameof(PostAd), new { Id = newAd.Id }, newAd);

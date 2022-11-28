@@ -134,7 +134,7 @@ namespace AdvertisingSystem.Bll.Services
         public async Task<IEnumerable<TransportlineDTO>> GetTransportlinesAsync(int tlId)
         {
             var transportlines = await _context.Transportlines
-                .Where(t => t.Id == tlId)
+                .Where(t => t.TransportCompanyId == tlId)
                 .ProjectTo<TransportlineDTO>(_mapper.ConfigurationProvider)
                 .ToListAsync();
 
