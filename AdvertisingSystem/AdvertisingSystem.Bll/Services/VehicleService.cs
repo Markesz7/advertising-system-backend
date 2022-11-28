@@ -38,6 +38,7 @@ namespace AdvertisingSystem.Bll.Services
         {
             var adsIDList = ads.Select(ad => ad.Id).ToList();
             var selectedAds = await _context.Ads
+                .Include(x => x.Advertiser)
                 .Where(ad => adsIDList.Contains(ad.Id)).ToListAsync();
 
             foreach (var ad in selectedAds)
@@ -46,14 +47,11 @@ namespace AdvertisingSystem.Bll.Services
 
                 if (ad.PaymentMethod == "Wallet")
                 {
-                    var advertiser = await _context.Advertisers.SingleAsync(x => x.Id == ad.Id);
-                    advertiser.Money -= adOccurence * 100;
-                    _context.Advertisers.Update(advertiser);
+                    ad.Advertiser.Money -= adOccurence * 100;
                 }
                 ad.Occurence += adOccurence;
             }
 
-            _context.Ads.UpdateRange(selectedAds);
             await _context.SaveChangesAsync();
         }
     }

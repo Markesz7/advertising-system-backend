@@ -34,7 +34,7 @@ namespace AdvertisingSystem.Bll.Services
 
         public async Task<AdResponseDTO> InsertAdAsync(AdRequestDTO ad, int advertiserId, string imagePath)
         {
-            // TODO: This is kind of a bad solution for this
+            // TODO: Not the best solution
             ad.ImagePath = imagePath;
             ad.AdURL = $"api/advertiser/{advertiserId}/image/{imagePath.Split(Path.DirectorySeparatorChar).Last()}";
             ad.AdvertiserId = advertiserId;

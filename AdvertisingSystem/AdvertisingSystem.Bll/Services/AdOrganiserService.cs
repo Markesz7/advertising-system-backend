@@ -34,7 +34,6 @@ namespace AdvertisingSystem.Bll.Services
 
         public async Task DoBookingAsync()
         {
-            #nullable disable
             var transportCompany = await _context.TransportCompanys.FirstAsync();
             var adOrganizer = await _context.Adorganisers.FirstAsync();
 
@@ -49,7 +48,7 @@ namespace AdvertisingSystem.Bll.Services
 
                 if(ad.PaymentMethod == "Monthly")
                 {
-                    var RemainingOcc = (int)ad.TargetOccurence - ad.Occurence;
+                    var RemainingOcc = (int)ad.TargetOccurence! - ad.Occurence;
 
                     var receipt = new Receipt
                     {
@@ -70,7 +69,7 @@ namespace AdvertisingSystem.Bll.Services
                     }
 
                     _context.Ads.Remove(ad);
-                    _fileService.DeleteAdImage(ad.AdvertiserId, ad.ImagePath.Split("/").Last());
+                    _fileService.DeleteAdImage(ad.AdvertiserId, ad.ImagePath.Split(Path.DirectorySeparatorChar).Last());
                 }
                 ad.Occurence = 0;
             }
@@ -89,13 +88,13 @@ namespace AdvertisingSystem.Bll.Services
             {
                 advertiser.Money += moneyDictionary[advertiser.Id];
             }
-            _context.UpdateRange(advertisers);
             await _context.SaveChangesAsync();
         }
 
         public async Task ToggleUserAsync(ToggleAdvertiserDTO advertiser)
         {
-            var efAdvertiser = await _context.Advertisers.SingleOrDefaultAsync(x => x.Id == advertiser.Id);
+            var efAdvertiser = await _context.Advertisers.SingleOrDefaultAsync(x => x.Id == advertiser.Id)
+                ?? throw new EntityNotFoundException();
             efAdvertiser.Enabled = advertiser.Enabled;
             await _context.SaveChangesAsync();
         }

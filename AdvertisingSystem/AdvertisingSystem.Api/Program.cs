@@ -156,7 +156,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-using (var serviceScope = app.Services.GetService<IServiceScopeFactory>().CreateScope())
+using (var serviceScope = app.Services.GetService<IServiceScopeFactory>()!.CreateScope())
 {
     var context = serviceScope.ServiceProvider.GetRequiredService<AppDbContext>();
     context.Database.Migrate();
