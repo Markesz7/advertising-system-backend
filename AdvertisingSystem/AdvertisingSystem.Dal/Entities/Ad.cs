@@ -17,7 +17,6 @@ namespace AdvertisingSystem.Dal.Entities
 
         // Entity Framework Core doesn't support Lists of primitives as values,
         // therefore we can store the possible answers in a ; seperated list.
-        //TODO: Check if this is the right way to check the nullable list
         [NotMapped]
         public List<string> PlaceGroups
         {

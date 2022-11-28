@@ -65,7 +65,6 @@ namespace AdvertisingSystem.Dal
             // Because now I use the TPH (Table-per-hierarchy) database inheritance, every user is in one table
             // so SQL server thinks if we delete a user, then it has two delete cascade paths (ad and transportline line)
             // For now to fix this, I use restrict delete for the transportlines to break one cascade path.
-            // TODO: With Restrict delete, we can't run Update-database 0
             builder.Entity<Transportline>()
                 .HasOne(p => p.TransportCompany)
                 .WithMany(p => p.Transportlines)

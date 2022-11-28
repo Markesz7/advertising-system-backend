@@ -20,7 +20,6 @@ namespace AdvertisingSystem.Bll.Services
 
         public async Task<IEnumerable<VehicleAdDTO>> GetAdsForTransportlineAsync(int tlId)
         {
-            // TODO: Check if there is a better solution for mapping the ads to VehicleAdDTO
             var ads = await _context.AdTransportlines
                 .Where(adtl => adtl.TransportlineId == tlId && (adtl.AdBan == null || adtl.AdBan.SubstituteAdURL != null))
                 .Where(adtl => adtl.Ad.PaymentMethod != "Wallet" || adtl.Ad.Advertiser.Money > 0)
@@ -29,7 +28,7 @@ namespace AdvertisingSystem.Bll.Services
             return ads;
         }
 
-        /* This is not good a solution and performance is bad as well, but for test data, it works.
+        /* This is not the best a solution for performance, but for test data, it works.
          * Possible solutions for later (this essentialy needs a bulk update):
          * 1. Update to EF Core 7 (released at the beginning of 2022 Nov), which supports bulk update, but this can break other stuff
          * 2. Add the Z.EntityFramework.Plus.EFCore nuget package, which supports bulk update, but this needs a lot of dependency updates

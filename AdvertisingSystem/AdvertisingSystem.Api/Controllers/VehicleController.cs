@@ -27,7 +27,7 @@ namespace AdvertisingSystem.Api.Controllers
         [HttpPost("{advertiserid}/image/{adPictureId}")]
         public ActionResult GetImage(int advertiserid, string adPictureId, [FromBody] string secret)
         {
-            if (secret != "123")
+            if (secret != "secretstring")
                 return StatusCode(403);
 
             var image = _fileService.LoadAdImage(advertiserid, adPictureId);
@@ -38,7 +38,7 @@ namespace AdvertisingSystem.Api.Controllers
         [HttpPost("{id}")]
         public async Task<ActionResult<IEnumerable<VehicleAdDTO>>> GetAdsForTransportline(int id, [FromBody] string secret)
         {
-            if (secret != "123")
+            if (secret != "secretstring")
                 return StatusCode(403);
             return (await _vehicleService.GetAdsForTransportlineAsync(id)).ToList();
         }
@@ -47,7 +47,7 @@ namespace AdvertisingSystem.Api.Controllers
         [HttpPost]
         public async Task<ActionResult> PostAdOccurences([FromBody] VehicleDTO request)
         {
-            if (request.Secret != "123")
+            if (request.Secret != "secretstring")
                 return StatusCode(403);
 
             await _vehicleService.UploadAdOccurence(request.Ads);
