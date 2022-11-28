@@ -95,7 +95,6 @@ namespace AdvertisingSystem.Bll.Services
 
         public async Task ToggleUserAsync(ToggleAdvertiserDTO advertiser)
         {
-            // TODO: Check for a better version
             var efAdvertiser = await _context.Advertisers.SingleOrDefaultAsync(x => x.Id == advertiser.Id);
             efAdvertiser.Enabled = advertiser.Enabled;
             await _context.SaveChangesAsync();
